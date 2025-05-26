@@ -11,8 +11,14 @@ const AreaCliente = () => {
       <Header />
       <main className="pt-16">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-[#0A1F44] to-blue-800 text-white py-20">
-          <div className="container mx-auto px-4 text-center">
+        <section className="relative bg-gradient-to-r from-[#0A1F44] to-blue-800 text-white py-20">
+          <div 
+            className="absolute inset-0 bg-cover bg-center opacity-20"
+            style={{
+              backgroundImage: 'url("https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80")'
+            }}
+          ></div>
+          <div className="relative container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Área do Cliente
             </h1>

@@ -1,14 +1,31 @@
 
 import React, { useState } from 'react';
-import { Menu, X, User, UserPlus } from 'lucide-react';
+import { Menu, X, User, UserPlus, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth();
 
   const handleNavigation = (path: string) => {
     navigate(path);
+    setIsMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMenuOpen(false);
+  };
+
+  const handleDashboardNavigation = () => {
+    if (user?.type === 'cliente') {
+      navigate('/cliente-panel');
+    } else if (user?.type === 'prestador') {
+      navigate('/prestador-panel');
+    }
     setIsMenuOpen(false);
   };
 
@@ -57,22 +74,43 @@ const Header = () => {
             </button>
           </nav>
 
-          {/* Login and Register Buttons */}
+          {/* User Area */}
           <div className="hidden md:flex items-center space-x-4">
-            <button 
-              onClick={() => handleNavigation('/cadastro')}
-              className="flex items-center space-x-2 border border-[#0A1F44] text-[#0A1F44] px-4 py-2 rounded-lg hover:bg-[#0A1F44] hover:text-white transition-colors"
-            >
-              <UserPlus size={20} />
-              <span>Cadastrar</span>
-            </button>
-            <button 
-              onClick={() => handleNavigation('/login')}
-              className="flex items-center space-x-2 bg-[#0A1F44] text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors"
-            >
-              <User size={20} />
-              <span>Login</span>
-            </button>
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={handleDashboardNavigation}
+                  className="flex items-center space-x-2 text-[#0A1F44] hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors"
+                >
+                  <User size={20} />
+                  <span className="font-medium">Olá, {user?.name.split(' ')[0]}</span>
+                </button>
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors"
+                >
+                  <LogOut size={20} />
+                  <span>Sair</span>
+                </button>
+              </div>
+            ) : (
+              <>
+                <button 
+                  onClick={() => handleNavigation('/cadastro')}
+                  className="flex items-center space-x-2 border border-[#0A1F44] text-[#0A1F44] px-4 py-2 rounded-lg hover:bg-[#0A1F44] hover:text-white transition-colors"
+                >
+                  <UserPlus size={20} />
+                  <span>Cadastrar</span>
+                </button>
+                <button 
+                  onClick={() => handleNavigation('/login')}
+                  className="flex items-center space-x-2 bg-[#0A1F44] text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors"
+                >
+                  <User size={20} />
+                  <span>Login</span>
+                </button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -118,21 +156,43 @@ const Header = () => {
               >
                 Suporte
               </button>
+              
               <div className="flex flex-col space-y-2 pt-4 border-t">
-                <button 
-                  onClick={() => handleNavigation('/cadastro')}
-                  className="flex items-center space-x-2 border border-[#0A1F44] text-[#0A1F44] px-4 py-2 rounded-lg hover:bg-[#0A1F44] hover:text-white transition-colors w-fit"
-                >
-                  <UserPlus size={20} />
-                  <span>Cadastrar</span>
-                </button>
-                <button 
-                  onClick={() => handleNavigation('/login')}
-                  className="flex items-center space-x-2 bg-[#0A1F44] text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors w-fit"
-                >
-                  <User size={20} />
-                  <span>Login</span>
-                </button>
+                {isAuthenticated ? (
+                  <>
+                    <button
+                      onClick={handleDashboardNavigation}
+                      className="flex items-center space-x-2 text-[#0A1F44] hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors w-fit"
+                    >
+                      <User size={20} />
+                      <span>Olá, {user?.name.split(' ')[0]}</span>
+                    </button>
+                    <button 
+                      onClick={handleLogout}
+                      className="flex items-center space-x-2 border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors w-fit"
+                    >
+                      <LogOut size={20} />
+                      <span>Sair</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button 
+                      onClick={() => handleNavigation('/cadastro')}
+                      className="flex items-center space-x-2 border border-[#0A1F44] text-[#0A1F44] px-4 py-2 rounded-lg hover:bg-[#0A1F44] hover:text-white transition-colors w-fit"
+                    >
+                      <UserPlus size={20} />
+                      <span>Cadastrar</span>
+                    </button>
+                    <button 
+                      onClick={() => handleNavigation('/login')}
+                      className="flex items-center space-x-2 bg-[#0A1F44] text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors w-fit"
+                    >
+                      <User size={20} />
+                      <span>Login</span>
+                    </button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

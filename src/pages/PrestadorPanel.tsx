@@ -4,15 +4,21 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Star, MessageCircle, Calendar, DollarSign, TrendingUp, Award, Camera, Bell } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../hooks/use-toast';
 
 const PrestadorPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  const solicitacoes = [
+  // Solicitações filtradas por especialidade do prestador
+  const todasSolicitacoes = [
     {
       id: 1,
       cliente: 'Maria Santos',
       servico: 'Limpeza Residencial',
+      categoria: 'Limpeza Residencial',
       data: '2025-01-16',
       valor: 'R$ 120,00',
       status: 'nova',
@@ -22,6 +28,7 @@ const PrestadorPanel = () => {
       id: 2,
       cliente: 'Carlos Oliveira',
       servico: 'Reparo de Torneira',
+      categoria: 'Serviços Elétricos',
       data: '2025-01-15',
       valor: 'R$ 80,00',
       status: 'respondida',
@@ -30,13 +37,29 @@ const PrestadorPanel = () => {
     {
       id: 3,
       cliente: 'Ana Costa',
-      servico: 'Pintura de Sala',
+      servico: 'Instalação Elétrica',
+      categoria: 'Serviços Elétricos',
       data: '2025-01-18',
       valor: 'R$ 300,00',
       status: 'aceita',
       urgencia: 'normal'
+    },
+    {
+      id: 4,
+      cliente: 'João Pereira',
+      servico: 'Pintura de Sala',
+      categoria: 'Pintura',
+      data: '2025-01-17',
+      valor: 'R$ 250,00',
+      status: 'nova',
+      urgencia: 'normal'
     }
   ];
+
+  // Filtrar solicitações por especialidade do prestador
+  const solicitacoesFiltradas = todasSolicitacoes.filter(
+    solicitacao => solicitacao.categoria === user?.especialidade
+  );
 
   const conquistas = [
     { nome: '5 Estrelas', descricao: 'Mantenha avaliação máxima', progresso: 100, cor: 'yellow' },
@@ -44,6 +67,41 @@ const PrestadorPanel = () => {
     { nome: 'Expert', descricao: 'Realize 50 serviços', progresso: 45, cor: 'purple' },
     { nome: 'Top Regional', descricao: 'Entre no top 10 da região', progresso: 65, cor: 'green' }
   ];
+
+  const handleResponderSolicitacao = (id: number) => {
+    toast({
+      title: "Resposta enviada!",
+      description: "O cliente receberá sua proposta em breve.",
+    });
+  };
+
+  const handleAceitarSolicitacao = (id: number) => {
+    toast({
+      title: "Solicitação aceita!",
+      description: "O serviço foi adicionado à sua agenda.",
+    });
+  };
+
+  const handleChat = (clienteId: number) => {
+    toast({
+      title: "Chat iniciado!",
+      description: "Funcionalidade de chat será implementada em breve.",
+    });
+  };
+
+  const handleAdicionarFoto = () => {
+    toast({
+      title: "Foto adicionada!",
+      description: "Sua foto foi adicionada ao portfólio.",
+    });
+  };
+
+  const handleAtualizarPerfil = () => {
+    toast({
+      title: "Perfil atualizado!",
+      description: "Suas informações foram salvas com sucesso.",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,9 +119,9 @@ const PrestadorPanel = () => {
                 />
                 <div>
                   <h1 className="text-3xl font-bold text-[#0A1F44] mb-1">
-                    João Técnico Silva
+                    {user?.name}
                   </h1>
-                  <p className="text-gray-600">Eletricista • São Luís, MA</p>
+                  <p className="text-gray-600">{user?.especialidade} • São Luís, MA</p>
                   <div className="flex items-center space-x-2 mt-1">
                     <div className="flex items-center">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -75,9 +133,9 @@ const PrestadorPanel = () => {
                 </div>
               </div>
               <div className="text-right">
-                <Button className="bg-[#0A1F44] text-white mb-2">
+                <Button className="bg-[#0A1F44] text-white mb-2" onClick={handleAtualizarPerfil}>
                   <Camera size={16} className="mr-2" />
-                  Atualizar Portfólio
+                  Atualizar Perfil
                 </Button>
                 <p className="text-sm text-gray-600">
                   Perfil verificado ✓
@@ -90,7 +148,7 @@ const PrestadorPanel = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
               <Bell className="w-12 h-12 text-[#0A1F44] mx-auto mb-2" />
-              <h3 className="text-2xl font-bold text-[#0A1F44]">3</h3>
+              <h3 className="text-2xl font-bold text-[#0A1F44]">{solicitacoesFiltradas.length}</h3>
               <p className="text-gray-600">Novas Solicitações</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
@@ -132,10 +190,12 @@ const PrestadorPanel = () => {
                       : 'text-gray-500 hover:text-[#0A1F44]'
                   }`}
                 >
-                  Solicitações
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    3
-                  </span>
+                  Solicitações ({user?.especialidade})
+                  {solicitacoesFiltradas.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {solicitacoesFiltradas.length}
+                    </span>
+                  )}
                 </button>
                 <button
                   onClick={() => setActiveTab('conquistas')}
@@ -168,7 +228,7 @@ const PrestadorPanel = () => {
                       <h3 className="text-xl font-bold mb-4">Próximos Serviços</h3>
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                          <span>Limpeza - Maria Santos</span>
+                          <span>Instalação Elétrica - Ana Costa</span>
                           <span className="text-sm">Hoje, 14:00</span>
                         </div>
                         <div className="flex justify-between items-center">
@@ -197,50 +257,76 @@ const PrestadorPanel = () => {
 
               {activeTab === 'solicitacoes' && (
                 <div className="space-y-4">
-                  {solicitacoes.map((solicitacao) => (
-                    <div key={solicitacao.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h3 className="font-bold text-[#0A1F44] text-lg">
-                              {solicitacao.servico}
-                            </h3>
-                            {solicitacao.urgencia === 'urgente' && (
-                              <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
-                                Urgente
-                              </span>
-                            )}
+                  <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h4 className="font-bold text-blue-800 mb-2">
+                      Solicitações para {user?.especialidade}
+                    </h4>
+                    <p className="text-sm text-blue-700">
+                      Você receberá apenas solicitações relacionadas à sua área de especialização.
+                    </p>
+                  </div>
+                  
+                  {solicitacoesFiltradas.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Bell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-600 mb-2">
+                        Nenhuma solicitação nova
+                      </h3>
+                      <p className="text-gray-500">
+                        Você será notificado quando houver novas solicitações para {user?.especialidade}
+                      </p>
+                    </div>
+                  ) : (
+                    solicitacoesFiltradas.map((solicitacao) => (
+                      <div key={solicitacao.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h3 className="font-bold text-[#0A1F44] text-lg">
+                                {solicitacao.servico}
+                              </h3>
+                              {solicitacao.urgencia === 'urgente' && (
+                                <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                                  Urgente
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-gray-600 mb-2">Cliente: {solicitacao.cliente}</p>
+                            <p className="text-sm text-gray-500">Data solicitada: {solicitacao.data}</p>
                           </div>
-                          <p className="text-gray-600 mb-2">Cliente: {solicitacao.cliente}</p>
-                          <p className="text-sm text-gray-500">Data solicitada: {solicitacao.data}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-[#0A1F44] mb-2">
-                            {solicitacao.valor}
-                          </p>
-                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                            solicitacao.status === 'nova' ? 'bg-blue-100 text-blue-800' :
-                            solicitacao.status === 'respondida' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {solicitacao.status === 'nova' ? 'Nova' :
-                             solicitacao.status === 'respondida' ? 'Respondida' : 'Aceita'}
-                          </span>
-                          <div className="flex space-x-2 mt-3">
-                            <Button size="sm" variant="outline">
-                              <MessageCircle size={16} className="mr-1" />
-                              Responder
-                            </Button>
-                            {solicitacao.status === 'nova' && (
-                              <Button size="sm" className="bg-[#0A1F44]">
-                                Aceitar
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-[#0A1F44] mb-2">
+                              {solicitacao.valor}
+                            </p>
+                            <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                              solicitacao.status === 'nova' ? 'bg-blue-100 text-blue-800' :
+                              solicitacao.status === 'respondida' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>
+                              {solicitacao.status === 'nova' ? 'Nova' :
+                               solicitacao.status === 'respondida' ? 'Respondida' : 'Aceita'}
+                            </span>
+                            <div className="flex space-x-2 mt-3">
+                              <Button size="sm" variant="outline" onClick={() => handleChat(solicitacao.id)}>
+                                <MessageCircle size={16} className="mr-1" />
+                                Chat
                               </Button>
-                            )}
+                              {solicitacao.status === 'nova' && (
+                                <Button size="sm" className="bg-[#0A1F44]" onClick={() => handleAceitarSolicitacao(solicitacao.id)}>
+                                  Aceitar
+                                </Button>
+                              )}
+                              {solicitacao.status === 'respondida' && (
+                                <Button size="sm" variant="outline" onClick={() => handleResponderSolicitacao(solicitacao.id)}>
+                                  Responder
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               )}
 
@@ -290,7 +376,7 @@ const PrestadorPanel = () => {
                 <div>
                   <div className="mb-6 flex justify-between items-center">
                     <h3 className="text-xl font-bold text-[#0A1F44]">Meu Portfólio</h3>
-                    <Button className="bg-[#0A1F44]">
+                    <Button className="bg-[#0A1F44]" onClick={handleAdicionarFoto}>
                       <Camera size={16} className="mr-2" />
                       Adicionar Foto
                     </Button>
@@ -304,7 +390,7 @@ const PrestadorPanel = () => {
                       <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden">
                         <img src={foto} alt={`Trabalho ${index + 1}`} className="w-full h-48 object-cover" />
                         <div className="p-4">
-                          <h4 className="font-bold text-[#0A1F44] mb-2">Instalação Elétrica</h4>
+                          <h4 className="font-bold text-[#0A1F44] mb-2">{user?.especialidade}</h4>
                           <p className="text-gray-600 text-sm">Cliente muito satisfeito com o resultado!</p>
                         </div>
                       </div>

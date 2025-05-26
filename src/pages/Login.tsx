@@ -7,6 +7,8 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { User, UserCheck, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../hooks/use-toast';
 
 const Login = () => {
   const [userType, setUserType] = useState<'cliente' | 'prestador'>('cliente');
@@ -14,17 +16,32 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Login de teste simples
-    if (email === 'cliente@teste.com' && password === '123456') {
-      navigate('/cliente-panel');
-    } else if (email === 'prestador@teste.com' && password === '123456') {
-      navigate('/prestador-panel');
+    const success = login(email, password);
+    
+    if (success) {
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Redirecionando para seu painel...",
+      });
+      
+      // Redirecionar baseado no tipo de usuário
+      if (email === 'cliente@teste.com') {
+        navigate('/cliente-panel');
+      } else if (email === 'prestador@teste.com') {
+        navigate('/prestador-panel');
+      }
     } else {
-      alert('Credenciais inválidas. Use as credenciais de teste.');
+      toast({
+        title: "Erro no login",
+        description: "Credenciais inválidas. Use as credenciais de teste.",
+        variant: "destructive",
+      });
     }
   };
 

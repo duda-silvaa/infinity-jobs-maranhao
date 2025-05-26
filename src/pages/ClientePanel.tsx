@@ -2,11 +2,16 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SolicitarServicoModal from '../components/SolicitarServicoModal';
 import { Calendar, MapPin, Star, MessageCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../hooks/use-toast';
 
 const ClientePanel = () => {
   const [activeTab, setActiveTab] = useState('solicitacoes');
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const solicitacoes = [
     {
@@ -44,6 +49,23 @@ const ClientePanel = () => {
     }
   ];
 
+  const prestadoresFavoritos = [
+    {
+      id: 1,
+      nome: 'Maria Silva Santos',
+      servico: 'Limpeza Residencial',
+      avaliacao: 4.9,
+      foto: 'https://images.unsplash.com/photo-1494790108755-2616b332c634?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
+    },
+    {
+      id: 2,
+      nome: 'João Carlos Oliveira',
+      servico: 'Serviços Elétricos',
+      avaliacao: 4.8,
+      foto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
+    }
+  ];
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmado': return 'text-green-600 bg-green-100';
@@ -62,6 +84,20 @@ const ClientePanel = () => {
     }
   };
 
+  const handleChat = (prestadorId: number) => {
+    toast({
+      title: "Chat iniciado!",
+      description: "Funcionalidade de chat será implementada em breve.",
+    });
+  };
+
+  const handleAvaliar = (solicitacaoId: number) => {
+    toast({
+      title: "Avaliação enviada!",
+      description: "Obrigado pelo seu feedback.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -72,15 +108,17 @@ const ClientePanel = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-[#0A1F44] mb-2">
-                  Bem-vindo, João!
+                  Bem-vindo, {user?.name.split(' ')[0]}!
                 </h1>
                 <p className="text-gray-600">
                   Gerencie seus serviços e acompanhe suas solicitações
                 </p>
               </div>
-              <Button className="bg-[#0A1F44] text-white">
-                Solicitar Novo Serviço
-              </Button>
+              <SolicitarServicoModal>
+                <Button className="bg-[#0A1F44] text-white">
+                  Solicitar Novo Serviço
+                </Button>
+              </SolicitarServicoModal>
             </div>
           </div>
 
@@ -189,12 +227,12 @@ const ClientePanel = () => {
                             {solicitacao.preco}
                           </p>
                           <div className="flex space-x-2 mt-3">
-                            <Button size="sm" variant="outline">
+                            <Button size="sm" variant="outline" onClick={() => handleChat(solicitacao.id)}>
                               <MessageCircle size={16} className="mr-1" />
                               Chat
                             </Button>
                             {solicitacao.status === 'concluido' && (
-                              <Button size="sm" className="bg-[#0A1F44]">
+                              <Button size="sm" className="bg-[#0A1F44]" onClick={() => handleAvaliar(solicitacao.id)}>
                                 <Star size={16} className="mr-1" />
                                 Avaliar
                               </Button>
@@ -208,14 +246,47 @@ const ClientePanel = () => {
               )}
 
               {activeTab === 'favoritos' && (
-                <div className="text-center py-12">
-                  <Star className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-600 mb-2">
-                    Nenhum prestador favoritado ainda
-                  </h3>
-                  <p className="text-gray-500">
-                    Favorite prestadores para acessá-los rapidamente
-                  </p>
+                <div className="space-y-4">
+                  {prestadoresFavoritos.map((prestador) => (
+                    <div key={prestador.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={prestador.foto}
+                            alt={prestador.nome}
+                            className="w-16 h-16 rounded-full object-cover"
+                          />
+                          <div>
+                            <h3 className="font-bold text-[#0A1F44] text-lg">
+                              {prestador.nome}
+                            </h3>
+                            <p className="text-gray-600 mb-1">{prestador.servico}</p>
+                            <div className="flex items-center">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star 
+                                  key={star} 
+                                  size={16} 
+                                  className={`${star <= prestador.avaliacao ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                                />
+                              ))}
+                              <span className="ml-2 text-sm text-gray-600">{prestador.avaliacao}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" onClick={() => handleChat(prestador.id)}>
+                            <MessageCircle size={16} className="mr-1" />
+                            Contatar
+                          </Button>
+                          <SolicitarServicoModal>
+                            <Button className="bg-[#0A1F44]">
+                              Solicitar Serviço
+                            </Button>
+                          </SolicitarServicoModal>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
 
