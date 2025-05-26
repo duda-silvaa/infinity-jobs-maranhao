@@ -1,10 +1,20 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative bg-gradient-to-r from-[#0A1F44] to-blue-800 text-white py-20">
-      <div className="absolute inset-0 bg-black opacity-40"></div>
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+        }}
+      ></div>
+      <div className="absolute inset-0 bg-black opacity-60"></div>
       <div className="relative container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           Transformando talentos locais em oportunidades reais
@@ -14,10 +24,16 @@ const HeroSection = () => {
           Valorizando profissionais locais e gerando impacto social.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-white text-[#0A1F44] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
+          <button 
+            onClick={() => navigate('/area-cliente')}
+            className="bg-white text-[#0A1F44] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors"
+          >
             Sou Cliente
           </button>
-          <button className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-[#0A1F44] transition-colors">
+          <button 
+            onClick={() => navigate('/area-prestador')}
+            className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-[#0A1F44] transition-colors"
+          >
             Sou Prestador
           </button>
         </div>

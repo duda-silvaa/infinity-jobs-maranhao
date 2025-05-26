@@ -1,8 +1,11 @@
 
 import React from 'react';
 import { User, UserCheck, MessageCircle, Star, FileText, Camera } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const UserAreas = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -56,7 +59,10 @@ const UserAreas = () => {
               </div>
             </div>
 
-            <button className="w-full mt-6 bg-[#0A1F44] text-white py-3 rounded-lg font-semibold hover:bg-blue-900 transition-colors">
+            <button 
+              onClick={() => navigate('/cadastro')}
+              className="w-full mt-6 bg-[#0A1F44] text-white py-3 rounded-lg font-semibold hover:bg-blue-900 transition-colors"
+            >
               Cadastrar como Cliente
             </button>
           </div>
@@ -101,7 +107,10 @@ const UserAreas = () => {
               </div>
             </div>
 
-            <button className="w-full mt-6 bg-[#0A1F44] text-white py-3 rounded-lg font-semibold hover:bg-blue-900 transition-colors">
+            <button 
+              onClick={() => navigate('/cadastro')}
+              className="w-full mt-6 bg-[#0A1F44] text-white py-3 rounded-lg font-semibold hover:bg-blue-900 transition-colors"
+            >
               Cadastrar como Prestador
             </button>
 
