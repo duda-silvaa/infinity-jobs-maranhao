@@ -11,6 +11,8 @@ import AreaPrestador from "./pages/AreaPrestador";
 import Suporte from "./pages/Suporte";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
+import ClientePanel from "./pages/ClientePanel";
+import PrestadorPanel from "./pages/PrestadorPanel";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/suporte" element={<Suporte />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/cliente-panel" element={<ClientePanel />} />
+          <Route path="/prestador-panel" element={<PrestadorPanel />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -6,10 +6,39 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { User, UserCheck, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [userType, setUserType] = useState<'cliente' | 'prestador'>('cliente');
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Login de teste simples
+    if (email === 'cliente@teste.com' && password === '123456') {
+      navigate('/cliente-panel');
+    } else if (email === 'prestador@teste.com' && password === '123456') {
+      navigate('/prestador-panel');
+    } else {
+      alert('Credenciais inválidas. Use as credenciais de teste.');
+    }
+  };
+
+  const fillTestCredentials = (type: 'cliente' | 'prestador') => {
+    if (type === 'cliente') {
+      setEmail('cliente@teste.com');
+      setPassword('123456');
+      setUserType('cliente');
+    } else {
+      setEmail('prestador@teste.com');
+      setPassword('123456');
+      setUserType('prestador');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -24,6 +53,28 @@ const Login = () => {
               <p className="text-gray-600">
                 Acesse sua conta e conecte-se à nossa comunidade
               </p>
+            </div>
+
+            {/* Login de Teste */}
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <h3 className="font-bold text-yellow-800 mb-2">🧪 Login de Teste</h3>
+              <p className="text-sm text-yellow-700 mb-3">
+                Use as credenciais abaixo para testar os painéis:
+              </p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => fillTestCredentials('cliente')}
+                  className="w-full text-left p-2 bg-white border border-yellow-300 rounded text-sm hover:bg-yellow-50"
+                >
+                  <strong>Cliente:</strong> cliente@teste.com / 123456
+                </button>
+                <button
+                  onClick={() => fillTestCredentials('prestador')}
+                  className="w-full text-left p-2 bg-white border border-yellow-300 rounded text-sm hover:bg-yellow-50"
+                >
+                  <strong>Prestador:</strong> prestador@teste.com / 123456
+                </button>
+              </div>
             </div>
 
             {/* Seletor de Tipo de Usuário */}
@@ -53,7 +104,7 @@ const Login = () => {
             </div>
 
             {/* Formulário de Login */}
-            <form className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <Label htmlFor="email">E-mail</Label>
                 <Input
@@ -61,6 +112,9 @@ const Login = () => {
                   type="email"
                   placeholder="seu@email.com"
                   className="mt-1"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
 
@@ -72,6 +126,9 @@ const Login = () => {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Digite sua senha"
                     className="pr-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                   <button
                     type="button"
@@ -93,7 +150,7 @@ const Login = () => {
                 </a>
               </div>
 
-              <Button className="w-full bg-[#0A1F44] text-white hover:bg-blue-900">
+              <Button type="submit" className="w-full bg-[#0A1F44] text-white hover:bg-blue-900">
                 Entrar
               </Button>
             </form>

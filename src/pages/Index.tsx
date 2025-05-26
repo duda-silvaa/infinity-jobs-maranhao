@@ -3,6 +3,7 @@ import React from 'react';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
 import SearchSection from '../components/SearchSection';
+import MainServices from '../components/MainServices';
 import RegionalImpact from '../components/RegionalImpact';
 import ProfileShowcase from '../components/ProfileShowcase';
 import GamificationSection from '../components/GamificationSection';
@@ -16,6 +17,7 @@ const Index = () => {
       <main>
         <HeroSection />
         <SearchSection />
+        <MainServices />
         <RegionalImpact />
         <ProfileShowcase />
         <GamificationSection />
