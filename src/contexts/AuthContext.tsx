@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService, AuthResponse } from '../services/authService';
 
 interface User {
   id: string;
@@ -11,9 +12,10 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,45 +30,52 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Recuperar dados do usuário do localStorage
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    // Verificar se há token salvo e validar
+    const checkAuth = async () => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          const userData = await authService.getCurrentUser();
+          setUser(userData);
+        } catch (error) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
+        }
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
-  const login = (email: string, password: string): boolean => {
-    // Simulação de login com usuários de teste
-    if (email === 'cliente@teste.com' && password === '123456') {
-      const userData = {
-        id: '1',
-        name: 'João Silva',
-        email: 'cliente@teste.com',
-        type: 'cliente' as const
-      };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const response: AuthResponse = await authService.login({ email, password });
+      
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      setUser(response.user);
+      
       return true;
-    } else if (email === 'prestador@teste.com' && password === '123456') {
-      const userData = {
-        id: '2',
-        name: 'João Técnico Silva',
-        email: 'prestador@teste.com',
-        type: 'prestador' as const,
-        especialidade: 'Serviços Elétricos'
-      };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      return true;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
     }
-    return false;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+    }
   };
 
   return (
@@ -74,7 +83,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       login,
       logout,
-      isAuthenticated: !!user
+      isAuthenticated: !!user,
+      loading
     }}>
       {children}
     </AuthContext.Provider>

@@ -15,33 +15,45 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     
-    const success = login(email, password);
-    
-    if (success) {
-      toast({
-        title: "Login realizado com sucesso!",
-        description: "Redirecionando para seu painel...",
-      });
+    try {
+      const success = await login(email, password);
       
-      // Redirecionar baseado no tipo de usuário
-      if (email === 'cliente@teste.com') {
-        navigate('/cliente-panel');
-      } else if (email === 'prestador@teste.com') {
-        navigate('/prestador-panel');
+      if (success) {
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Redirecionando para seu painel...",
+        });
+        
+        // Redirecionar baseado no tipo de usuário
+        if (userType === 'cliente') {
+          navigate('/cliente-panel');
+        } else {
+          navigate('/prestador-panel');
+        }
+      } else {
+        toast({
+          title: "Erro no login",
+          description: "Credenciais inválidas. Verifique seus dados.",
+          variant: "destructive",
+        });
       }
-    } else {
+    } catch (error) {
       toast({
         title: "Erro no login",
-        description: "Credenciais inválidas. Verifique seus dados.",
+        description: "Ocorreu um erro. Tente novamente.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,8 +145,12 @@ const Login = () => {
                 </a>
               </div>
 
-              <Button type="submit" className="w-full bg-[#0A1F44] text-white hover:bg-blue-900">
-                Entrar
+              <Button 
+                type="submit" 
+                className="w-full bg-[#0A1F44] text-white hover:bg-blue-900"
+                disabled={loading}
+              >
+                {loading ? 'Entrando...' : 'Entrar'}
               </Button>
             </form>
 

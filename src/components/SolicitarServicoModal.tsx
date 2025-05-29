@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Button } from '../components/ui/button';
@@ -7,6 +6,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { useToast } from '../hooks/use-toast';
+import { servicoService } from '../services/servicoService';
 
 const servicos = [
   'Reparos Gerais',
@@ -29,9 +29,10 @@ const SolicitarServicoModal = ({ children }: SolicitarServicoModalProps) => {
   const [horario, setHorario] = useState('');
   const [orcamento, setOrcamento] = useState('');
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!servico || !descricao || !endereco || !data || !horario) {
@@ -43,20 +44,40 @@ const SolicitarServicoModal = ({ children }: SolicitarServicoModalProps) => {
       return;
     }
     
-    // Simular envio da solicitação
-    toast({
-      title: "Solicitação enviada com sucesso!",
-      description: "Prestadores da sua região receberão sua solicitação em breve.",
-    });
+    setLoading(true);
     
-    // Reset form
-    setServico('');
-    setDescricao('');
-    setEndereco('');
-    setData('');
-    setHorario('');
-    setOrcamento('');
-    setOpen(false);
+    try {
+      await servicoService.criarSolicitacao({
+        servico,
+        descricao,
+        endereco,
+        data,
+        horario,
+        orcamento
+      });
+      
+      toast({
+        title: "Solicitação enviada com sucesso!",
+        description: "Prestadores da sua região receberão sua solicitação em breve.",
+      });
+      
+      // Reset form
+      setServico('');
+      setDescricao('');
+      setEndereco('');
+      setData('');
+      setHorario('');
+      setOrcamento('');
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: "Erro ao enviar solicitação",
+        description: "Tente novamente em alguns instantes.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -149,8 +170,12 @@ const SolicitarServicoModal = ({ children }: SolicitarServicoModalProps) => {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-[#0A1F44] hover:bg-blue-900">
-              Enviar Solicitação
+            <Button 
+              type="submit" 
+              className="bg-[#0A1F44] hover:bg-blue-900"
+              disabled={loading}
+            >
+              {loading ? 'Enviando...' : 'Enviar Solicitação'}
             </Button>
           </div>
         </form>
