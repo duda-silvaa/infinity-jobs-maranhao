@@ -39,21 +39,9 @@ const Login = () => {
     } else {
       toast({
         title: "Erro no login",
-        description: "Credenciais inválidas. Use as credenciais de teste.",
+        description: "Credenciais inválidas. Verifique seus dados.",
         variant: "destructive",
       });
-    }
-  };
-
-  const fillTestCredentials = (type: 'cliente' | 'prestador') => {
-    if (type === 'cliente') {
-      setEmail('cliente@teste.com');
-      setPassword('123456');
-      setUserType('cliente');
-    } else {
-      setEmail('prestador@teste.com');
-      setPassword('123456');
-      setUserType('prestador');
     }
   };
 
@@ -70,28 +58,6 @@ const Login = () => {
               <p className="text-gray-600">
                 Acesse sua conta e conecte-se à nossa comunidade
               </p>
-            </div>
-
-            {/* Login de Teste */}
-            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <h3 className="font-bold text-yellow-800 mb-2">🧪 Login de Teste</h3>
-              <p className="text-sm text-yellow-700 mb-3">
-                Use as credenciais abaixo para testar os painéis:
-              </p>
-              <div className="space-y-2">
-                <button
-                  onClick={() => fillTestCredentials('cliente')}
-                  className="w-full text-left p-2 bg-white border border-yellow-300 rounded text-sm hover:bg-yellow-50"
-                >
-                  <strong>Cliente:</strong> cliente@teste.com / 123456
-                </button>
-                <button
-                  onClick={() => fillTestCredentials('prestador')}
-                  className="w-full text-left p-2 bg-white border border-yellow-300 rounded text-sm hover:bg-yellow-50"
-                >
-                  <strong>Prestador:</strong> prestador@teste.com / 123456
-                </button>
-              </div>
             </div>
 
             {/* Seletor de Tipo de Usuário */}

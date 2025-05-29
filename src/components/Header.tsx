@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Menu, X, User, UserPlus, LogOut } from 'lucide-react';
+import { Menu, X, User, UserPlus, LogOut, Infinity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -35,6 +35,9 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center cursor-pointer" onClick={() => handleNavigation('/')}>
+            <div className="bg-[#0A1F44] p-2 rounded-full mr-3">
+              <Infinity className="text-[#1E40AF]" size={24} />
+            </div>
             <h1 className="text-2xl font-bold text-[#0A1F44]">
               Infinity TrabalheJá
             </h1>

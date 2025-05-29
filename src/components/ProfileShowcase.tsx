@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, Camera, Award } from 'lucide-react';
+import { Star, Award } from 'lucide-react';
 
 const ProfileShowcase = () => {
   const sampleProfile = {
@@ -11,7 +11,8 @@ const ProfileShowcase = () => {
     city: "São Luís",
     bio: "Há 15 anos transformando lares maranhenses com serviços elétricos de qualidade. Meu sonho é levar segurança e conforto para cada família.",
     badges: ["Confiável", "Pontual", "5 Estrelas"],
-    completedJobs: 156
+    completedJobs: 156,
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
   };
 
   return (
@@ -31,8 +32,12 @@ const ProfileShowcase = () => {
             {/* Header do perfil */}
             <div className="bg-gradient-to-r from-[#0A1F44] to-blue-600 text-white p-6">
               <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                  <Camera size={32} />
+                <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white border-opacity-30">
+                  <img 
+                    src={sampleProfile.avatar} 
+                    alt={sampleProfile.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-2xl font-bold">{sampleProfile.name}</h3>
@@ -78,12 +83,21 @@ const ProfileShowcase = () => {
             <div className="p-6">
               <h4 className="font-semibold text-[#0A1F44] mb-3">Meu Portfólio</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map((item) => (
+                {[
+                  'https://images.unsplash.com/photo-1621905252472-e8b3191aa262?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+                  'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+                  'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+                  'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'
+                ].map((image, index) => (
                   <div
-                    key={item}
-                    className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-300 transition-colors cursor-pointer"
+                    key={index}
+                    className="aspect-square bg-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
                   >
-                    <Camera className="text-gray-500" size={24} />
+                    <img 
+                      src={image} 
+                      alt={`Trabalho ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 ))}
               </div>
