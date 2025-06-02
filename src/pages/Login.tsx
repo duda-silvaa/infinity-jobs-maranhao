@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
@@ -17,8 +17,19 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const { toast } = useToast();
+
+  // Redirecionar se já estiver logado
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.type === 'cliente') {
+        navigate('/cliente-panel');
+      } else {
+        navigate('/prestador-panel');
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,13 +43,6 @@ const Login = () => {
           title: "Login realizado com sucesso!",
           description: "Redirecionando para seu painel...",
         });
-        
-        // Redirecionar baseado no tipo de usuário
-        if (userType === 'cliente') {
-          navigate('/cliente-panel');
-        } else {
-          navigate('/prestador-panel');
-        }
       } else {
         toast({
           title: "Erro no login",
@@ -70,32 +74,6 @@ const Login = () => {
               <p className="text-gray-600">
                 Acesse sua conta e conecte-se à nossa comunidade
               </p>
-            </div>
-
-            {/* Seletor de Tipo de Usuário */}
-            <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setUserType('cliente')}
-                className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md transition-colors ${
-                  userType === 'cliente'
-                    ? 'bg-[#0A1F44] text-white'
-                    : 'text-gray-600 hover:text-[#0A1F44]'
-                }`}
-              >
-                <User size={20} className="mr-2" />
-                Cliente
-              </button>
-              <button
-                onClick={() => setUserType('prestador')}
-                className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md transition-colors ${
-                  userType === 'prestador'
-                    ? 'bg-[#0A1F44] text-white'
-                    : 'text-gray-600 hover:text-[#0A1F44]'
-                }`}
-              >
-                <UserCheck size={20} className="mr-2" />
-                Prestador
-              </button>
             </div>
 
             {/* Formulário de Login */}
@@ -161,27 +139,6 @@ const Login = () => {
                   Cadastre-se aqui
                 </a>
               </p>
-            </div>
-
-            {/* Login Social */}
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Ou continue com</span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button variant="outline" className="w-full">
-                  Google
-                </Button>
-                <Button variant="outline" className="w-full">
-                  Facebook
-                </Button>
-              </div>
             </div>
           </div>
         </div>

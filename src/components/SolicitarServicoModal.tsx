@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Button } from '../components/ui/button';
@@ -19,9 +20,10 @@ const servicos = [
 
 interface SolicitarServicoModalProps {
   children: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const SolicitarServicoModal = ({ children }: SolicitarServicoModalProps) => {
+const SolicitarServicoModal = ({ children, onSuccess }: SolicitarServicoModalProps) => {
   const [servico, setServico] = useState('');
   const [descricao, setDescricao] = useState('');
   const [endereco, setEndereco] = useState('');
@@ -69,7 +71,13 @@ const SolicitarServicoModal = ({ children }: SolicitarServicoModalProps) => {
       setHorario('');
       setOrcamento('');
       setOpen(false);
+      
+      // Chamar callback de sucesso se fornecido
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
+      console.error('Erro ao criar solicitação:', error);
       toast({
         title: "Erro ao enviar solicitação",
         description: "Tente novamente em alguns instantes.",

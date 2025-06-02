@@ -9,7 +9,206 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      favoritos: {
+        Row: {
+          cliente_id: string
+          created_at: string
+          id: string
+          prestador_id: string
+        }
+        Insert: {
+          cliente_id: string
+          created_at?: string
+          id?: string
+          prestador_id: string
+        }
+        Update: {
+          cliente_id?: string
+          created_at?: string
+          id?: string
+          prestador_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favoritos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "favoritos_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      portfolio: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_trabalho: string | null
+          descricao: string | null
+          id: string
+          imagem_url: string
+          prestador_id: string
+          titulo: string
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_trabalho?: string | null
+          descricao?: string | null
+          id?: string
+          imagem_url: string
+          prestador_id: string
+          titulo: string
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_trabalho?: string | null
+          descricao?: string | null
+          id?: string
+          imagem_url?: string
+          prestador_id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          cidade: string | null
+          created_at: string
+          email: string
+          especialidade: string | null
+          estado: string | null
+          id: string
+          name: string
+          telefone: string | null
+          type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          cidade?: string | null
+          created_at?: string
+          email: string
+          especialidade?: string | null
+          estado?: string | null
+          id?: string
+          name: string
+          telefone?: string | null
+          type: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          cidade?: string | null
+          created_at?: string
+          email?: string
+          especialidade?: string | null
+          estado?: string | null
+          id?: string
+          name?: string
+          telefone?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      solicitacoes: {
+        Row: {
+          avaliacao: number | null
+          categoria: string
+          cliente_id: string
+          comentario_avaliacao: string | null
+          created_at: string
+          data_solicitada: string
+          descricao: string
+          endereco: string
+          horario_solicitado: string
+          id: string
+          orcamento_maximo: number | null
+          prestador_id: string | null
+          proposta_prestador: string | null
+          servico: string
+          status: string
+          updated_at: string
+          urgencia: string
+          valor_acordado: number | null
+        }
+        Insert: {
+          avaliacao?: number | null
+          categoria: string
+          cliente_id: string
+          comentario_avaliacao?: string | null
+          created_at?: string
+          data_solicitada: string
+          descricao: string
+          endereco: string
+          horario_solicitado: string
+          id?: string
+          orcamento_maximo?: number | null
+          prestador_id?: string | null
+          proposta_prestador?: string | null
+          servico: string
+          status?: string
+          updated_at?: string
+          urgencia?: string
+          valor_acordado?: number | null
+        }
+        Update: {
+          avaliacao?: number | null
+          categoria?: string
+          cliente_id?: string
+          comentario_avaliacao?: string | null
+          created_at?: string
+          data_solicitada?: string
+          descricao?: string
+          endereco?: string
+          horario_solicitado?: string
+          id?: string
+          orcamento_maximo?: number | null
+          prestador_id?: string | null
+          proposta_prestador?: string | null
+          servico?: string
+          status?: string
+          updated_at?: string
+          urgencia?: string
+          valor_acordado?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solicitacoes_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "solicitacoes_prestador_id_fkey"
+            columns: ["prestador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import Sobre from "./pages/Sobre";
 import AreaCliente from "./pages/AreaCliente";
@@ -33,9 +34,22 @@ const App = () => (
             <Route path="/suporte" element={<Suporte />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
-            <Route path="/cliente-panel" element={<ClientePanel />} />
-            <Route path="/prestador-panel" element={<PrestadorPanel />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route 
+              path="/cliente-panel" 
+              element={
+                <ProtectedRoute requiredUserType="cliente">
+                  <ClientePanel />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/prestador-panel" 
+              element={
+                <ProtectedRoute requiredUserType="prestador">
+                  <PrestadorPanel />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
