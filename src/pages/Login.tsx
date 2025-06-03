@@ -5,13 +5,12 @@ import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { User, UserCheck, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 
 const Login = () => {
-  const [userType, setUserType] = useState<'cliente' | 'prestador'>('cliente');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,6 +22,7 @@ const Login = () => {
   // Redirecionar se já estiver logado
   useEffect(() => {
     if (isAuthenticated && user) {
+      console.log('Usuário já logado, redirecionando para:', user.type);
       if (user.type === 'cliente') {
         navigate('/cliente-panel');
       } else {
@@ -33,27 +33,40 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha email e senha.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     
     try {
-      const success = await login(email, password);
+      console.log('Iniciando processo de login...');
+      const result = await login(email, password);
       
-      if (success) {
+      if (result.success) {
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para seu painel...",
         });
+        // O redirecionamento será feito pelo useEffect quando o user for atualizado
       } else {
         toast({
           title: "Erro no login",
-          description: "Credenciais inválidas. Verifique seus dados.",
+          description: result.error || "Credenciais inválidas. Verifique seus dados.",
           variant: "destructive",
         });
       }
     } catch (error) {
+      console.error('Erro inesperado:', error);
       toast({
         title: "Erro no login",
-        description: "Ocorreu um erro. Tente novamente.",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -74,6 +87,17 @@ const Login = () => {
               <p className="text-gray-600">
                 Acesse sua conta e conecte-se à nossa comunidade
               </p>
+            </div>
+
+            {/* Aviso sobre confirmação de email */}
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-start">
+                <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5 mr-2" />
+                <div className="text-sm text-blue-700">
+                  <p className="font-semibold">Primeira vez fazendo login?</p>
+                  <p>Verifique seu email para confirmar a conta antes de tentar fazer login.</p>
+                </div>
+              </div>
             </div>
 
             {/* Formulário de Login */}

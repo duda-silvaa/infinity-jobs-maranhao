@@ -16,7 +16,7 @@ interface UserProfile {
 interface AuthContextType {
   user: UserProfile | null;
   session: Session | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
@@ -37,8 +37,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserProfile = async (userId: string) => {
+  const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
     try {
+      console.log('Buscando perfil para usuário:', userId);
+      
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
@@ -46,10 +48,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .single();
 
       if (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Erro ao buscar perfil:', error);
         return null;
       }
 
+      if (!profile) {
+        console.log('Perfil não encontrado');
+        return null;
+      }
+
+      console.log('Perfil encontrado:', profile);
       return {
         id: profile.user_id,
         name: profile.name,
@@ -60,35 +68,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         cidade: profile.cidade,
       };
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Erro ao buscar perfil:', error);
       return null;
     }
   };
 
   useEffect(() => {
-    // Configurar listener de mudanças de autenticação
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth event:', event, session);
-        setSession(session);
-        
-        if (session?.user) {
-          // Buscar perfil do usuário com delay para dar tempo do trigger criar o perfil
-          setTimeout(async () => {
-            const profile = await fetchUserProfile(session.user.id);
-            setUser(profile);
-            setLoading(false);
-          }, 500);
-        } else {
-          setUser(null);
-          setLoading(false);
-        }
-      }
-    );
-
+    console.log('Configurando AuthContext...');
+    
     // Verificar sessão inicial
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('Sessão inicial:', session);
       setSession(session);
+      
       if (session?.user) {
         const profile = await fetchUserProfile(session.user.id);
         setUser(profile);
@@ -96,25 +88,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     });
 
+    // Configurar listener de mudanças de autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Evento de auth:', event, session?.user?.email);
+        setSession(session);
+        
+        if (session?.user) {
+          // Aguardar um pouco para o trigger criar o perfil
+          setTimeout(async () => {
+            const profile = await fetchUserProfile(session.user.id);
+            setUser(profile);
+            setLoading(false);
+          }, 1000);
+        } else {
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    );
+
     return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      console.log('Tentando fazer login com:', email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       if (error) {
-        console.error('Login failed:', error);
-        return false;
+        console.error('Erro no login:', error);
+        
+        // Tratar diferentes tipos de erro
+        if (error.message.includes('Email not confirmed')) {
+          return { 
+            success: false, 
+            error: 'Você precisa confirmar seu email antes de fazer login. Verifique sua caixa de entrada.' 
+          };
+        }
+        
+        if (error.message.includes('Invalid login credentials')) {
+          return { 
+            success: false, 
+            error: 'Email ou senha incorretos. Verifique suas credenciais.' 
+          };
+        }
+        
+        return { 
+          success: false, 
+          error: error.message || 'Erro ao fazer login. Tente novamente.' 
+        };
       }
       
-      return !!data.user;
+      if (data.user) {
+        console.log('Login realizado com sucesso:', data.user.email);
+        return { success: true };
+      }
+      
+      return { success: false, error: 'Erro inesperado no login.' };
     } catch (error) {
-      console.error('Login failed:', error);
-      return false;
+      console.error('Erro no login:', error);
+      return { 
+        success: false, 
+        error: 'Erro de conexão. Verifique sua internet e tente novamente.' 
+      };
     }
   };
 
@@ -124,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setSession(null);
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Erro no logout:', error);
     }
   };
 
@@ -134,7 +175,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       session,
       login,
       logout,
-      isAuthenticated: !!user,
+      isAuthenticated: !!user && !!session,
       loading
     }}>
       {children}
