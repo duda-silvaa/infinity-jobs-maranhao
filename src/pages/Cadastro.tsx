@@ -1,15 +1,135 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { User, UserCheck, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../integrations/supabase/client';
+import { useToast } from '../hooks/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 const Cadastro = () => {
   const [userType, setUserType] = useState<'cliente' | 'prestador'>('cliente');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    telefone: '',
+    cidade: 'São Luís',
+    servico: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { isAuthenticated, user } = useAuth();
+
+  // Redirecionar se já estiver logado
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.type === 'cliente') {
+        navigate('/cliente-panel');
+      } else {
+        navigate('/prestador-panel');
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!acceptedTerms) {
+      toast({
+        title: "Erro",
+        description: "Você deve aceitar os termos de uso.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Erro",
+        description: "As senhas não coincidem.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast({
+        title: "Erro",
+        description: "A senha deve ter pelo menos 6 caracteres.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Registrar usuário no Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.nome,
+            type: userType,
+            especialidade: userType === 'prestador' ? formData.servico : null,
+            telefone: formData.telefone,
+            cidade: formData.cidade
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Signup error:', error);
+        toast({
+          title: "Erro no cadastro",
+          description: error.message === 'User already registered' 
+            ? "Este e-mail já está cadastrado." 
+            : "Erro ao criar conta. Tente novamente.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Cadastro realizado com sucesso!",
+          description: "Você já pode fazer login.",
+        });
+        
+        // Redirecionar para login
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast({
+        title: "Erro no cadastro",
+        description: "Ocorreu um erro. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -29,6 +149,7 @@ const Cadastro = () => {
             {/* Seletor de Tipo de Usuário */}
             <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
               <button
+                type="button"
                 onClick={() => setUserType('cliente')}
                 className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md transition-colors ${
                   userType === 'cliente'
@@ -40,6 +161,7 @@ const Cadastro = () => {
                 Cliente
               </button>
               <button
+                type="button"
                 onClick={() => setUserType('prestador')}
                 className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md transition-colors ${
                   userType === 'prestador'
@@ -53,7 +175,7 @@ const Cadastro = () => {
             </div>
 
             {/* Formulário de Cadastro */}
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="nome">Nome Completo</Label>
                 <Input
@@ -61,6 +183,9 @@ const Cadastro = () => {
                   type="text"
                   placeholder="Seu nome completo"
                   className="mt-1"
+                  value={formData.nome}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
 
@@ -71,6 +196,9 @@ const Cadastro = () => {
                   type="email"
                   placeholder="seu@email.com"
                   className="mt-1"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
 
@@ -82,6 +210,8 @@ const Cadastro = () => {
                     type="tel"
                     placeholder="(98) 99999-9999"
                     className="mt-1"
+                    value={formData.telefone}
+                    onChange={handleInputChange}
                   />
                 </div>
                 <div>
@@ -91,6 +221,8 @@ const Cadastro = () => {
                     type="text"
                     placeholder="São Luís"
                     className="mt-1"
+                    value={formData.cidade}
+                    onChange={handleInputChange}
                   />
                 </div>
               </div>
@@ -103,6 +235,9 @@ const Cadastro = () => {
                     type="text"
                     placeholder="Ex: Eletricista, Pedreiro, Designer..."
                     className="mt-1"
+                    value={formData.servico}
+                    onChange={handleInputChange}
+                    required={userType === 'prestador'}
                   />
                 </div>
               )}
@@ -115,6 +250,10 @@ const Cadastro = () => {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Crie uma senha segura"
                     className="pr-10"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                    minLength={6}
                   />
                   <button
                     type="button"
@@ -128,16 +267,34 @@ const Cadastro = () => {
 
               <div>
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Digite a senha novamente"
-                  className="mt-1"
-                />
+                <div className="relative mt-1">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="Digite a senha novamente"
+                    className="pr-10"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-start">
-                <input type="checkbox" className="mr-2 mt-1" />
+                <input 
+                  type="checkbox" 
+                  className="mr-2 mt-1" 
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  required
+                />
                 <span className="text-sm text-gray-600">
                   Concordo com os{' '}
                   <a href="#" className="text-[#0A1F44] hover:underline">
@@ -150,8 +307,12 @@ const Cadastro = () => {
                 </span>
               </div>
 
-              <Button className="w-full bg-[#0A1F44] text-white hover:bg-blue-900">
-                Criar Conta
+              <Button 
+                type="submit"
+                className="w-full bg-[#0A1F44] text-white hover:bg-blue-900"
+                disabled={loading}
+              >
+                {loading ? 'Criando conta...' : 'Criar Conta'}
               </Button>
             </form>
 
@@ -176,10 +337,10 @@ const Cadastro = () => {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button">
                   Google
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button">
                   Facebook
                 </Button>
               </div>
@@ -187,7 +348,8 @@ const Cadastro = () => {
           </div>
         </div>
       </main>
-      <Footer />    </div>
+      <Footer />
+    </div>
   );
 };
 
