@@ -9,6 +9,8 @@ interface UserProfile {
   email: string;
   type: 'cliente' | 'prestador';
   especialidade?: string;
+  telefone?: string;
+  cidade?: string;
 }
 
 interface AuthContextType {
@@ -35,6 +37,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+
+      return {
+        id: profile.user_id,
+        name: profile.name,
+        email: profile.email,
+        type: profile.type,
+        especialidade: profile.especialidade,
+        telefone: profile.telefone,
+        cidade: profile.cidade,
+      };
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     // Configurar listener de mudanças de autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -43,55 +73,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         
         if (session?.user) {
-          // Buscar perfil do usuário
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .single();
-
-          if (profile) {
-            setUser({
-              id: profile.user_id,
-              name: profile.name,
-              email: profile.email,
-              type: profile.type,
-              especialidade: profile.especialidade,
-            });
-          }
+          // Buscar perfil do usuário com delay para dar tempo do trigger criar o perfil
+          setTimeout(async () => {
+            const profile = await fetchUserProfile(session.user.id);
+            setUser(profile);
+            setLoading(false);
+          }, 500);
         } else {
           setUser(null);
+          setLoading(false);
         }
-        
-        setLoading(false);
       }
     );
 
     // Verificar sessão inicial
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
-        // Buscar perfil inicial
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single()
-          .then(({ data: profile }) => {
-            if (profile) {
-              setUser({
-                id: profile.user_id,
-                name: profile.name,
-                email: profile.email,
-                type: profile.type,
-                especialidade: profile.especialidade,
-              });
-            }
-            setLoading(false);
-          });
-      } else {
-        setLoading(false);
+        const profile = await fetchUserProfile(session.user.id);
+        setUser(profile);
       }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -119,6 +121,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
     } catch (error) {
       console.error('Logout error:', error);
     }

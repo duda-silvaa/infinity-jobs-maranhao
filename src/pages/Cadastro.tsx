@@ -100,11 +100,19 @@ const Cadastro = () => {
 
       if (error) {
         console.error('Signup error:', error);
+        
+        let errorMessage = "Erro ao criar conta. Tente novamente.";
+        if (error.message.includes('already registered')) {
+          errorMessage = "Este e-mail já está cadastrado.";
+        } else if (error.message.includes('invalid')) {
+          errorMessage = "E-mail inválido.";
+        } else if (error.message.includes('weak')) {
+          errorMessage = "Senha muito fraca. Use uma senha mais forte.";
+        }
+        
         toast({
           title: "Erro no cadastro",
-          description: error.message === 'User already registered' 
-            ? "Este e-mail já está cadastrado." 
-            : "Erro ao criar conta. Tente novamente.",
+          description: errorMessage,
           variant: "destructive",
         });
         return;
@@ -113,7 +121,7 @@ const Cadastro = () => {
       if (data.user) {
         toast({
           title: "Cadastro realizado com sucesso!",
-          description: "Você já pode fazer login.",
+          description: "Você pode fazer login agora.",
         });
         
         // Redirecionar para login
