@@ -8,7 +8,10 @@ const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // Função para fazer logout
+  // Chama useAuth.logout que notifica o backend e limpa dados locais
   const handleLogout = async () => {
+    console.log('Fazendo logout do usuário:', user?.name);
     await logout();
     navigate('/');
   };
@@ -18,7 +21,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-[#0A1F44]">ServiçosMA</h1>
+            <h1 className="text-2xl font-bold text-[#0A1F44]">Infinity TrabalheJá</h1>
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6">
@@ -42,8 +45,9 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             {isAuthenticated && user ? (
               <div className="flex items-center space-x-4">
+                {/* Mostra nome do usuário logado */}
                 <span className="text-gray-600">
-                  Olá, {user.name}
+                  Olá, {user.name}!
                 </span>
                 <Button 
                   onClick={handleLogout}

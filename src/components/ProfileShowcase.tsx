@@ -9,7 +9,7 @@ const ProfileShowcase = () => {
     rating: 4.9,
     reviews: 127,
     city: "São Luís",
-    bio: "Há 15 anos transformando lares maranhenses com serviços elétricos de qualidade. Meu sonho é levar segurança e conforto para cada família.",
+    bio: "Há 15 anos transformando lares com serviços elétricos de qualidade. Meu sonho é levar segurança e conforto para cada família através do Infinity TrabalheJá.",
     badges: ["Confiável", "Pontual", "5 Estrelas"],
     completedJobs: 156,
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
@@ -23,7 +23,7 @@ const ProfileShowcase = () => {
             Currículo e Portfólio Humanizado
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Cada prestador tem um perfil completo com sua história, experiências e sonhos
+            Cada prestador tem um perfil completo com sua história, experiências e sonhos no Infinity TrabalheJá
           </p>
         </div>
 
@@ -79,15 +79,15 @@ const ProfileShowcase = () => {
               <p className="text-gray-700 leading-relaxed">{sampleProfile.bio}</p>
             </div>
 
-            {/* Galeria de trabalhos */}
+            {/* Galeria de trabalhos com imagens mais profissionais */}
             <div className="p-6">
               <h4 className="font-semibold text-[#0A1F44] mb-3">Meu Portfólio</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  'https://images.unsplash.com/photo-1621905252472-e8b3191aa262?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+                  'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
                   'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-                  'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-                  'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'
+                  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+                  'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'
                 ].map((image, index) => (
                   <div
                     key={index}

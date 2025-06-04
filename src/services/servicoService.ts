@@ -1,221 +1,125 @@
 
-import { supabase } from '../integrations/supabase/client';
+import { apiCall } from '../config/api';
 
-export interface SolicitacaoServico {
+// Interface para dados de solicitação de serviço
+export interface SolicitacaoData {
   servico: string;
   descricao: string;
   endereco: string;
-  data: string;
-  horario: string;
+  data: string; // formato: YYYY-MM-DD
+  horario: string; // formato: HH:MM
   orcamento?: string;
 }
 
+// Interface para solicitação completa retornada pelo backend
 export interface Solicitacao {
   id: string;
-  cliente_id: string;
-  prestador_id?: string;
   servico: string;
-  categoria: string;
   descricao: string;
   endereco: string;
   data_solicitada: string;
   horario_solicitado: string;
   orcamento_maximo?: number;
-  valor_acordado?: number;
-  status: string;
-  urgencia: string;
+  status: 'nova' | 'respondida' | 'aceita' | 'em_andamento' | 'concluida' | 'cancelada';
   proposta_prestador?: string;
   avaliacao?: number;
   comentario_avaliacao?: string;
+  cliente_id: string;
+  prestador_id?: string;
+  cliente_nome?: string;
+  prestador_nome?: string;
   created_at: string;
-  profiles?: {
-    name: string;
-    email: string;
-    telefone?: string;
-  };
+  updated_at: string;
 }
 
-const mapServicoToCategoria = (servico: string): string => {
-  const mapeamento: { [key: string]: string } = {
-    'Reparos Gerais': 'Reparos Gerais',
-    'Limpeza Residencial': 'Limpeza Residencial',
-    'Serviços Elétricos': 'Serviços Elétricos',
-    'Pintura': 'Pintura',
-    'Jardinagem': 'Jardinagem',
-    'Mecânica Automotiva': 'Mecânica Automotiva'
-  };
-  return mapeamento[servico] || servico;
-};
-
 export const servicoService = {
-  criarSolicitacao: async (data: SolicitacaoServico) => {
-    const { data: { user } } = await supabase.auth.getUser();
+  // Função para criar nova solicitação de serviço (CLIENTE)
+  // Envia dados da solicitação para o backend no endpoint POST /api/solicitacoes
+  // Espera receber: { message: string, solicitacao: Solicitacao }
+  criarSolicitacao: async (dados: SolicitacaoData): Promise<Solicitacao> => {
+    const response = await apiCall('/solicitacoes', {
+      method: 'POST',
+      body: JSON.stringify({
+        tipo_servico: dados.servico,
+        descricao: dados.descricao,
+        endereco: dados.endereco,
+        data_solicitada: dados.data,
+        horario_solicitado: dados.horario,
+        orcamento_maximo: dados.orcamento ? parseFloat(dados.orcamento) : null
+      }),
+    });
     
-    if (!user) {
-      throw new Error('Usuário não autenticado');
-    }
-
-    const { data: result, error } = await supabase
-      .from('solicitacoes')
-      .insert({
-        cliente_id: user.id,
-        servico: data.servico,
-        categoria: mapServicoToCategoria(data.servico),
-        descricao: data.descricao,
-        endereco: data.endereco,
-        data_solicitada: data.data,
-        horario_solicitado: data.horario,
-        orcamento_maximo: data.orcamento ? parseFloat(data.orcamento) : null,
-        status: 'nova',
-        urgencia: 'normal'
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Erro ao criar solicitação:', error);
-      throw error;
-    }
-
-    return result;
+    return response.solicitacao;
   },
 
-  listarSolicitacoesCliente: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('Usuário não autenticado');
-    }
-
-    const { data, error } = await supabase
-      .from('solicitacoes')
-      .select(`
-        *,
-        profiles:prestador_id (
-          name,
-          email,
-          telefone
-        )
-      `)
-      .eq('cliente_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Erro ao listar solicitações:', error);
-      throw error;
-    }
-
-    return data || [];
+  // Função para listar solicitações do cliente logado
+  // Chama endpoint GET /api/solicitacoes/cliente
+  // Espera receber: Array<Solicitacao>
+  listarSolicitacoesCliente: async (): Promise<Solicitacao[]> => {
+    const response = await apiCall('/solicitacoes/cliente');
+    return response.solicitacoes || response;
   },
 
-  listarSolicitacoesPrestador: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('Usuário não autenticado');
-    }
-
-    // Primeiro, buscar a especialidade do prestador
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('especialidade')
-      .eq('user_id', user.id)
-      .single();
-
-    if (!profile?.especialidade) {
-      return [];
-    }
-
-    const { data, error } = await supabase
-      .from('solicitacoes')
-      .select(`
-        *,
-        profiles:cliente_id (
-          name,
-          email,
-          telefone
-        )
-      `)
-      .eq('categoria', profile.especialidade)
-      .in('status', ['nova', 'respondida'])
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Erro ao listar solicitações:', error);
-      throw error;
-    }
-
-    return data || [];
+  // Função para listar solicitações disponíveis para prestador
+  // Chama endpoint GET /api/solicitacoes/prestador
+  // Filtra por especialidade do prestador logado
+  // Espera receber: Array<Solicitacao>
+  listarSolicitacoesPrestador: async (): Promise<Solicitacao[]> => {
+    const response = await apiCall('/solicitacoes/prestador');
+    return response.solicitacoes || response;
   },
 
-  aceitarSolicitacao: async (id: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
+  // Função para prestador aceitar uma solicitação
+  // Chama endpoint PUT /api/solicitacoes/{id}/aceitar
+  // Espera receber: { message: string, solicitacao: Solicitacao }
+  aceitarSolicitacao: async (solicitacaoId: string): Promise<Solicitacao> => {
+    const response = await apiCall(`/solicitacoes/${solicitacaoId}/aceitar`, {
+      method: 'PUT',
+    });
     
-    if (!user) {
-      throw new Error('Usuário não autenticado');
-    }
-
-    const { data, error } = await supabase
-      .from('solicitacoes')
-      .update({
-        prestador_id: user.id,
-        status: 'aceita'
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Erro ao aceitar solicitação:', error);
-      throw error;
-    }
-
-    return data;
+    return response.solicitacao;
   },
 
-  responderSolicitacao: async (id: string, proposta: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
+  // Função para prestador fazer proposta em uma solicitação
+  // Chama endpoint PUT /api/solicitacoes/{id}/proposta
+  // Espera receber: { message: string, solicitacao: Solicitacao }
+  responderSolicitacao: async (solicitacaoId: string, proposta: string): Promise<Solicitacao> => {
+    const response = await apiCall(`/solicitacoes/${solicitacaoId}/proposta`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        proposta_valor: parseFloat(proposta)
+      }),
+    });
     
-    if (!user) {
-      throw new Error('Usuário não autenticado');
-    }
-
-    const { data, error } = await supabase
-      .from('solicitacoes')
-      .update({
-        prestador_id: user.id,
-        proposta_prestador: proposta,
-        status: 'respondida'
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Erro ao responder solicitação:', error);
-      throw error;
-    }
-
-    return data;
+    return response.solicitacao;
   },
 
-  avaliarServico: async (id: string, avaliacao: number, comentario: string) => {
-    const { data, error } = await supabase
-      .from('solicitacoes')
-      .update({
+  // Função para cliente avaliar um serviço concluído
+  // Chama endpoint PUT /api/solicitacoes/{id}/avaliar
+  // Espera receber: { message: string, solicitacao: Solicitacao }
+  avaliarServico: async (solicitacaoId: string, avaliacao: number, comentario?: string): Promise<Solicitacao> => {
+    const response = await apiCall(`/solicitacoes/${solicitacaoId}/avaliar`, {
+      method: 'PUT',
+      body: JSON.stringify({
         avaliacao,
-        comentario_avaliacao: comentario,
-        status: 'concluida'
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Erro ao avaliar serviço:', error);
-      throw error;
-    }
-
-    return data;
+        comentario_avaliacao: comentario
+      }),
+    });
+    
+    return response.solicitacao;
   },
+
+  // Função para atualizar status de uma solicitação
+  // Chama endpoint PUT /api/solicitacoes/{id}/status
+  // Espera receber: { message: string, solicitacao: Solicitacao }
+  atualizarStatus: async (solicitacaoId: string, novoStatus: string): Promise<Solicitacao> => {
+    const response = await apiCall(`/solicitacoes/${solicitacaoId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        status: novoStatus
+      }),
+    });
+    
+    return response.solicitacao;
+  }
 };

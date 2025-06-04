@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
@@ -31,6 +31,8 @@ const Login = () => {
     }
   }, [isAuthenticated, user, navigate]);
 
+  // Função para fazer login
+  // Chama useAuth.login que envia dados para POST /api/auth/login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -85,19 +87,8 @@ const Login = () => {
                 Fazer Login
               </h1>
               <p className="text-gray-600">
-                Acesse sua conta e conecte-se à nossa comunidade
+                Acesse sua conta no Infinity TrabalheJá
               </p>
-            </div>
-
-            {/* Aviso sobre confirmação de email */}
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-start">
-                <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5 mr-2" />
-                <div className="text-sm text-blue-700">
-                  <p className="font-semibold">Primeira vez fazendo login?</p>
-                  <p>Verifique seu email para confirmar a conta antes de tentar fazer login.</p>
-                </div>
-              </div>
             </div>
 
             {/* Formulário de Login */}

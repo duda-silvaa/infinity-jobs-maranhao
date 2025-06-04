@@ -7,9 +7,9 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { User, UserCheck, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../integrations/supabase/client';
 import { useToast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
+import { authService, RegisterData } from '../services/authService';
 
 const Cadastro = () => {
   const [userType, setUserType] = useState<'cliente' | 'prestador'>('cliente');
@@ -50,6 +50,8 @@ const Cadastro = () => {
     }));
   };
 
+  // Função para cadastrar novo usuário
+  // Envia dados para authService.register que chama POST /api/auth/register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -80,58 +82,59 @@ const Cadastro = () => {
       return;
     }
 
+    if (userType === 'prestador' && !formData.servico) {
+      toast({
+        title: "Erro",
+        description: "Prestadores devem informar sua especialidade.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Registrar usuário no Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
+      // Prepara dados para envio ao backend
+      const registerData: RegisterData = {
+        name: formData.nome,
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            name: formData.nome,
-            type: userType,
-            especialidade: userType === 'prestador' ? formData.servico : null,
-            telefone: formData.telefone,
-            cidade: formData.cidade
-          }
-        }
+        type: userType,
+        telefone: formData.telefone,
+        cidade: formData.cidade,
+        ...(userType === 'prestador' && { especialidade: formData.servico })
+      };
+
+      console.log('Enviando dados de cadastro para o backend...');
+      
+      // Chama endpoint POST /api/auth/register
+      const response = await authService.register(registerData);
+      
+      toast({
+        title: "Cadastro realizado com sucesso!",
+        description: "Você pode fazer login agora.",
       });
-
-      if (error) {
-        console.error('Signup error:', error);
-        
-        let errorMessage = "Erro ao criar conta. Tente novamente.";
-        if (error.message.includes('already registered')) {
-          errorMessage = "Este e-mail já está cadastrado.";
-        } else if (error.message.includes('invalid')) {
-          errorMessage = "E-mail inválido.";
-        } else if (error.message.includes('weak')) {
-          errorMessage = "Senha muito fraca. Use uma senha mais forte.";
-        }
-        
-        toast({
-          title: "Erro no cadastro",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        return;
+      
+      console.log('Usuário cadastrado:', response.user.name);
+      
+      // Redirecionar para login
+      navigate('/login');
+    } catch (error: any) {
+      console.error('Erro no cadastro:', error);
+      
+      let errorMessage = "Erro ao criar conta. Tente novamente.";
+      
+      if (error.message.includes('400')) {
+        errorMessage = "Dados inválidos. Verifique as informações.";
+      } else if (error.message.includes('409')) {
+        errorMessage = "Este e-mail já está cadastrado.";
+      } else if (error.message.includes('500')) {
+        errorMessage = "Erro interno do servidor. Tente novamente mais tarde.";
       }
-
-      if (data.user) {
-        toast({
-          title: "Cadastro realizado com sucesso!",
-          description: "Você pode fazer login agora.",
-        });
-        
-        // Redirecionar para login
-        navigate('/login');
-      }
-    } catch (error) {
-      console.error('Signup error:', error);
+      
       toast({
         title: "Erro no cadastro",
-        description: "Ocorreu um erro. Tente novamente.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -150,7 +153,7 @@ const Cadastro = () => {
                 Criar Conta
               </h1>
               <p className="text-gray-600">
-                Junte-se à nossa comunidade maranhense
+                Junte-se ao Infinity TrabalheJá
               </p>
             </div>
 
@@ -237,7 +240,7 @@ const Cadastro = () => {
 
               {userType === 'prestador' && (
                 <div>
-                  <Label htmlFor="servico">Serviço Principal</Label>
+                  <Label htmlFor="servico">Especialidade</Label>
                   <Input
                     id="servico"
                     type="text"
@@ -331,27 +334,6 @@ const Cadastro = () => {
                   Faça login aqui
                 </a>
               </p>
-            </div>
-
-            {/* Cadastro Social */}
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Ou cadastre-se com</span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button variant="outline" className="w-full" type="button">
-                  Google
-                </Button>
-                <Button variant="outline" className="w-full" type="button">
-                  Facebook
-                </Button>
-              </div>
             </div>
           </div>
         </div>

@@ -34,6 +34,9 @@ const SolicitarServicoModal = ({ children, onSuccess }: SolicitarServicoModalPro
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  // Função para criar nova solicitação de serviço
+  // Envia dados para servicoService.criarSolicitacao
+  // que chama POST /api/solicitacoes
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -49,6 +52,11 @@ const SolicitarServicoModal = ({ children, onSuccess }: SolicitarServicoModalPro
     setLoading(true);
     
     try {
+      console.log('Criando nova solicitação de serviço...');
+      
+      // Chama endpoint POST /api/solicitacoes
+      // Envia: { tipo_servico, descricao, endereco, data_solicitada, horario_solicitado, orcamento_maximo? }
+      // Espera receber: { message: string, solicitacao: Solicitacao }
       await servicoService.criarSolicitacao({
         servico,
         descricao,
@@ -63,6 +71,8 @@ const SolicitarServicoModal = ({ children, onSuccess }: SolicitarServicoModalPro
         description: "Prestadores da sua região receberão sua solicitação em breve.",
       });
       
+      console.log('Solicitação criada com sucesso');
+      
       // Reset form
       setServico('');
       setDescricao('');
@@ -76,11 +86,22 @@ const SolicitarServicoModal = ({ children, onSuccess }: SolicitarServicoModalPro
       if (onSuccess) {
         onSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao criar solicitação:', error);
+      
+      let errorMessage = "Erro ao enviar solicitação. Tente novamente.";
+      
+      if (error.message.includes('400')) {
+        errorMessage = "Dados inválidos. Verifique as informações.";
+      } else if (error.message.includes('401')) {
+        errorMessage = "Você precisa estar logado para solicitar serviços.";
+      } else if (error.message.includes('500')) {
+        errorMessage = "Erro interno do servidor. Tente novamente mais tarde.";
+      }
+      
       toast({
         title: "Erro ao enviar solicitação",
-        description: "Tente novamente em alguns instantes.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

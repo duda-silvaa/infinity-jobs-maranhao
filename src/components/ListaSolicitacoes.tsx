@@ -22,23 +22,42 @@ const ListaSolicitacoes = ({ tipo, refresh, onRefreshComplete }: ListaSolicitaco
   const { user } = useAuth();
   const { toast } = useToast();
 
+  // Função para carregar solicitações baseado no tipo de usuário
   const carregarSolicitacoes = async () => {
     try {
       setLoading(true);
       let data;
       
       if (tipo === 'cliente') {
+        console.log('Carregando solicitações do cliente...');
+        // Chama endpoint GET /api/solicitacoes/cliente
+        // Retorna lista de solicitações feitas pelo cliente logado
         data = await servicoService.listarSolicitacoesCliente();
       } else {
+        console.log('Carregando solicitações para prestador...');
+        // Chama endpoint GET /api/solicitacoes/prestador
+        // Retorna lista de solicitações disponíveis para a especialidade do prestador
         data = await servicoService.listarSolicitacoesPrestador();
       }
       
       setSolicitacoes(data);
-    } catch (error) {
+      console.log(`${data.length} solicitações carregadas`);
+    } catch (error: any) {
       console.error('Erro ao carregar solicitações:', error);
+      
+      let errorMessage = "Erro ao carregar solicitações. Tente novamente.";
+      
+      if (error.message.includes('401')) {
+        errorMessage = "Sessão expirada. Faça login novamente.";
+      } else if (error.message.includes('403')) {
+        errorMessage = "Você não tem permissão para acessar estas solicitações.";
+      } else if (error.message.includes('500')) {
+        errorMessage = "Erro interno do servidor. Tente novamente mais tarde.";
+      }
+      
       toast({
         title: "Erro ao carregar solicitações",
-        description: "Tente novamente em alguns instantes.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -59,39 +78,76 @@ const ListaSolicitacoes = ({ tipo, refresh, onRefreshComplete }: ListaSolicitaco
     }
   }, [refresh]);
 
+  // Função para prestador aceitar uma solicitação
+  // Chama endpoint PUT /api/solicitacoes/{id}/aceitar
   const handleAceitarSolicitacao = async (id: string) => {
     try {
+      console.log('Aceitando solicitação:', id);
+      
+      // Chama endpoint PUT /api/solicitacoes/{id}/aceitar
+      // Espera receber: { message: string, solicitacao: Solicitacao }
       await servicoService.aceitarSolicitacao(id);
+      
       toast({
         title: "Solicitação aceita!",
         description: "O cliente será notificado sobre sua aceitação.",
       });
+      
+      console.log('Solicitação aceita com sucesso');
       carregarSolicitacoes();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao aceitar solicitação:', error);
+      
+      let errorMessage = "Erro ao aceitar solicitação. Tente novamente.";
+      
+      if (error.message.includes('400')) {
+        errorMessage = "Esta solicitação não pode ser aceita no momento.";
+      } else if (error.message.includes('409')) {
+        errorMessage = "Esta solicitação já foi aceita por outro prestador.";
+      }
+      
       toast({
         title: "Erro ao aceitar solicitação",
-        description: "Tente novamente.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
   };
 
+  // Função para prestador fazer proposta em uma solicitação
+  // Chama endpoint PUT /api/solicitacoes/{id}/proposta
   const handleResponderSolicitacao = async (id: string) => {
     const proposta = prompt('Digite sua proposta de preço (R$):');
     if (proposta) {
       try {
+        console.log('Enviando proposta para solicitação:', id);
+        
+        // Chama endpoint PUT /api/solicitacoes/{id}/proposta
+        // Envia: { proposta_valor: number }
+        // Espera receber: { message: string, solicitacao: Solicitacao }
         await servicoService.responderSolicitacao(id, proposta);
+        
         toast({
           title: "Proposta enviada!",
           description: "O cliente receberá sua proposta.",
         });
+        
+        console.log('Proposta enviada com sucesso');
         carregarSolicitacoes();
-      } catch (error) {
+      } catch (error: any) {
         console.error('Erro ao responder solicitação:', error);
+        
+        let errorMessage = "Erro ao enviar proposta. Tente novamente.";
+        
+        if (error.message.includes('400')) {
+          errorMessage = "Valor da proposta inválido.";
+        } else if (error.message.includes('409')) {
+          errorMessage = "Você já fez uma proposta para esta solicitação.";
+        }
+        
         toast({
           title: "Erro ao enviar proposta",
-          description: "Tente novamente.",
+          description: errorMessage,
           variant: "destructive",
         });
       }
@@ -190,10 +246,11 @@ const ListaSolicitacoes = ({ tipo, refresh, onRefreshComplete }: ListaSolicitaco
                 </div>
               )}
               
-              {solicitacao.profiles && (
+              {(solicitacao.cliente_nome || solicitacao.prestador_nome) && (
                 <div className="flex items-center text-gray-600">
                   <User size={16} className="mr-2" />
-                  {tipo === 'cliente' ? 'Prestador: ' : 'Cliente: '}{solicitacao.profiles.name}
+                  {tipo === 'cliente' ? 'Prestador: ' : 'Cliente: '}
+                  {tipo === 'cliente' ? solicitacao.prestador_nome : solicitacao.cliente_nome}
                 </div>
               )}
             </div>
