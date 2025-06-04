@@ -1,56 +1,77 @@
 
 import React from 'react';
-import { Wrench, Home, Zap, Paintbrush, TreePine, Car } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { 
+  Wrench, 
+  Brush, 
+  Zap, 
+  Home, 
+  Car, 
+  Palette,
+  Monitor,
+  Camera,
+  ArrowRight
+} from 'lucide-react';
 
 const MainServices = () => {
   const services = [
     {
-      id: 1,
-      name: 'Reparos Gerais',
-      description: 'Consertos domésticos, montagem de móveis e pequenos reparos',
-      icon: Wrench,
-      image: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      professionals: 124
+      icon: <Wrench size={32} />,
+      title: 'Reparos Gerais',
+      description: 'Consertos e manutenções diversas para sua casa ou empresa',
+      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: true
     },
     {
-      id: 2,
-      name: 'Limpeza Residencial',
-      description: 'Faxinas completas, limpeza de carpetes e organização',
-      icon: Home,
-      image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      professionals: 89
+      icon: <Home size={32} />,
+      title: 'Limpeza Residencial',
+      description: 'Serviços profissionais de limpeza para deixar sua casa impecável',
+      image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: true
     },
     {
-      id: 3,
-      name: 'Serviços Elétricos',
-      description: 'Instalações elétricas, reparos e manutenção predial',
-      icon: Zap,
-      image: 'https://images.unsplash.com/photo-1621905252472-e8b3191aa262?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      professionals: 67
+      icon: <Zap size={32} />,
+      title: 'Serviços Elétricos',
+      description: 'Instalações, reparos e manutenções elétricas com segurança',
+      image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: false
     },
     {
-      id: 4,
-      name: 'Pintura',
-      description: 'Pintura residencial, comercial e serviços de decoração',
-      icon: Paintbrush,
-      image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      professionals: 78
+      icon: <Brush size={32} />,
+      title: 'Pintura',
+      description: 'Pintura residencial e comercial com acabamento profissional',
+      image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: false
     },
     {
-      id: 5,
-      name: 'Jardinagem',
-      description: 'Cuidados com jardins, podas e paisagismo',
-      icon: TreePine,
-      image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      professionals: 45
+      icon: <Car size={32} />,
+      title: 'Mecânica Automotiva',
+      description: 'Manutenção e reparo de veículos com qualidade garantida',
+      image: 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: false
     },
     {
-      id: 6,
-      name: 'Mecânica Automotiva',
-      description: 'Reparos automotivos, manutenção e serviços móveis',
-      icon: Car,
-      image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      professionals: 56
+      icon: <Palette size={32} />,
+      title: 'Design Gráfico',
+      description: 'Criação de logotipos, materiais gráficos e identidade visual',
+      image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: true
+    },
+    {
+      icon: <Monitor size={32} />,
+      title: 'Desenvolvimento Web',
+      description: 'Sites, aplicativos e soluções digitais personalizadas',
+      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: false
+    },
+    {
+      icon: <Camera size={32} />,
+      title: 'Fotografia',
+      description: 'Ensaios, eventos e fotografias profissionais',
+      image: 'https://images.unsplash.com/photo-1554048612-b6a482b224a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      popular: false
     }
   ];
 
@@ -59,51 +80,62 @@ const MainServices = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0A1F44] mb-4">
-            Principais Serviços Disponíveis
+            Principais Categorias de Serviços
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Encontre profissionais qualificados em todo o Maranhão
+            Conectamos você com profissionais qualificados em diversas áreas
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service) => {
-            const IconComponent = service.icon;
-            return (
-              <div key={service.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="relative h-48">
-                  <img 
-                    src={service.image} 
-                    alt={service.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4">
-                    <div className="bg-[#0A1F44] text-white p-2 rounded-full">
-                      <IconComponent size={24} />
-                    </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {services.map((service, index) => (
+            <Card key={index} className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md">
+              <div className="relative">
+                <img 
+                  src={service.image} 
+                  alt={service.title}
+                  className="w-full h-48 object-cover rounded-t-lg"
+                />
+                {service.popular && (
+                  <div className="absolute top-2 right-2 bg-yellow-400 text-[#0A1F44] px-2 py-1 rounded-full text-xs font-semibold">
+                    Popular
                   </div>
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-[#0A1F44] mb-2">
-                    {service.name}
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    {service.description}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">
-                      {service.professionals} profissionais
-                    </span>
-                    <button className="bg-[#0A1F44] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-900 transition-colors">
-                      Ver Prestadores
-                    </button>
+                )}
+                <div className="absolute inset-0 bg-[#0A1F44] bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded-t-lg flex items-center justify-center">
+                  <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                    {service.icon}
                   </div>
                 </div>
               </div>
-            );
-          })}
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-[#0A1F44] group-hover:text-blue-600 transition-colors">
+                  <span className="md:hidden">{service.icon}</span>
+                  <span>{service.title}</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 text-sm mb-4">{service.description}</p>
+                <Link to={`/area-cliente?servico=${encodeURIComponent(service.title)}`}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full border-[#0A1F44] text-[#0A1F44] hover:bg-[#0A1F44] hover:text-white group-hover:bg-[#0A1F44] group-hover:text-white transition-colors"
+                  >
+                    Ver Prestadores
+                    <ArrowRight size={16} className="ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <Link to="/area-cliente">
+            <Button size="lg" className="bg-[#0A1F44] text-white hover:bg-blue-900 px-8">
+              Ver Todos os Serviços
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

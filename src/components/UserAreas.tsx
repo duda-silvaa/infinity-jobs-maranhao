@@ -1,125 +1,98 @@
 
 import React from 'react';
-import { User, UserCheck, MessageCircle, Star, FileText, Camera } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Button } from './ui/button';
+import { User, UserCheck, ArrowRight } from 'lucide-react';
 
 const UserAreas = () => {
-  const navigate = useNavigate();
-
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0A1F44] mb-4">
-            Áreas Exclusivas
+            Escolha Como Participar
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experiências personalizadas para clientes e prestadores
+            Seja você um cliente procurando serviços ou um prestador oferecendo suas habilidades
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Área do Cliente */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="text-center mb-6">
-              <div className="bg-[#0A1F44] text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <User size={32} />
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <div className="relative h-48">
+              <img 
+                src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Cliente satisfeito com serviço"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[#0A1F44] bg-opacity-60 flex items-center justify-center">
+                <User size={64} className="text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-[#0A1F44] mb-2">
-                Área do Cliente
-              </h3>
-              <p className="text-gray-600">
-                Encontre e contrate os melhores profissionais
+            </div>
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-[#0A1F44] mb-4">Área do Cliente</h3>
+              <p className="text-gray-600 mb-6">
+                Encontre os melhores prestadores de serviço para suas necessidades. 
+                Solicite orçamentos, compare preços e avalie profissionais.
               </p>
+              <ul className="space-y-2 mb-6 text-gray-600">
+                <li>✓ Solicite serviços facilmente</li>
+                <li>✓ Compare propostas</li>
+                <li>✓ Avalie prestadores</li>
+                <li>✓ Histórico de serviços</li>
+              </ul>
+              <Link to="/area-cliente">
+                <Button className="w-full bg-[#0A1F44] text-white hover:bg-blue-900 flex items-center justify-center space-x-2">
+                  <span>Acessar Área do Cliente</span>
+                  <ArrowRight size={20} />
+                </Button>
+              </Link>
             </div>
-
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <Star className="text-[#0A1F44] mt-1" size={20} />
-                <div>
-                  <h4 className="font-semibold text-gray-800">Favoritos</h4>
-                  <p className="text-gray-600 text-sm">Salve seus prestadores preferidos</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <MessageCircle className="text-[#0A1F44] mt-1" size={20} />
-                <div>
-                  <h4 className="font-semibold text-gray-800">Orçamentos Rápidos</h4>
-                  <p className="text-gray-600 text-sm">Solicite orçamentos em poucos cliques</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <FileText className="text-[#0A1F44] mt-1" size={20} />
-                <div>
-                  <h4 className="font-semibold text-gray-800">Histórico</h4>
-                  <p className="text-gray-600 text-sm">Acompanhe todos os seus serviços</p>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => navigate('/cadastro')}
-              className="w-full mt-6 bg-[#0A1F44] text-white py-3 rounded-lg font-semibold hover:bg-blue-900 transition-colors"
-            >
-              Cadastrar como Cliente
-            </button>
           </div>
 
           {/* Área do Prestador */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="text-center mb-6">
-              <div className="bg-[#0A1F44] text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <UserCheck size={32} />
-              </div>
-              <h3 className="text-2xl font-bold text-[#0A1F44] mb-2">
-                Área do Prestador
-              </h3>
-              <p className="text-gray-600">
-                Gerencie seu negócio e conquiste mais clientes
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <MessageCircle className="text-[#0A1F44] mt-1" size={20} />
-                <div>
-                  <h4 className="font-semibold text-gray-800">Solicitações</h4>
-                  <p className="text-gray-600 text-sm">Receba e responda pedidos de orçamento</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <Camera className="text-[#0A1F44] mt-1" size={20} />
-                <div>
-                  <h4 className="font-semibold text-gray-800">Portfólio</h4>
-                  <p className="text-gray-600 text-sm">Mostre seus trabalhos com fotos e vídeos</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <Star className="text-[#0A1F44] mt-1" size={20} />
-                <div>
-                  <h4 className="font-semibold text-gray-800">Gamificação</h4>
-                  <p className="text-gray-600 text-sm">Ganhe pontos, badges e rankings</p>
-                </div>
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <div className="relative h-48">
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Prestador de serviço trabalhando"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[#0A1F44] bg-opacity-60 flex items-center justify-center">
+                <UserCheck size={64} className="text-white" />
               </div>
             </div>
-
-            <button 
-              onClick={() => navigate('/cadastro')}
-              className="w-full mt-6 bg-[#0A1F44] text-white py-3 rounded-lg font-semibold hover:bg-blue-900 transition-colors"
-            >
-              Cadastrar como Prestador
-            </button>
-
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-500">
-                <strong>Cadastro 100% gratuito</strong> • Orientações sobre MEI e precificação
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-[#0A1F44] mb-4">Área do Prestador</h3>
+              <p className="text-gray-600 mb-6">
+                Ofereça seus serviços e encontre clientes em sua região. 
+                Monte seu portfólio e construa sua reputação.
               </p>
+              <ul className="space-y-2 mb-6 text-gray-600">
+                <li>✓ Receba solicitações</li>
+                <li>✓ Monte seu portfólio</li>
+                <li>✓ Defina seus preços</li>
+                <li>✓ Construa sua reputação</li>
+              </ul>
+              <Link to="/area-prestador">
+                <Button className="w-full bg-yellow-400 text-[#0A1F44] hover:bg-yellow-300 flex items-center justify-center space-x-2">
+                  <span>Acessar Área do Prestador</span>
+                  <ArrowRight size={20} />
+                </Button>
+              </Link>
             </div>
           </div>
+        </div>
+
+        {/* Botão de suporte */}
+        <div className="text-center mt-12">
+          <p className="text-gray-600 mb-4">Precisa de ajuda para começar?</p>
+          <Link to="/suporte">
+            <Button variant="outline" className="border-[#0A1F44] text-[#0A1F44] hover:bg-[#0A1F44] hover:text-white">
+              Falar com Suporte
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

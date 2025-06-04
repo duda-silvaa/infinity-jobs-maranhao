@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { useAuth } from '../contexts/AuthContext';
+import { Infinity } from 'lucide-react';
 
 const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -20,7 +21,8 @@ const Header = () => {
     <header className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center space-x-2">
+            <Infinity size={32} className="text-[#0A1F44]" />
             <h1 className="text-2xl font-bold text-[#0A1F44]">Infinity TrabalheJá</h1>
           </Link>
           
