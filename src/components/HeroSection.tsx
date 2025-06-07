@@ -6,7 +6,7 @@ import { Search, Users, Star } from 'lucide-react';
 
 const HeroSection = () => {
   return (
-    <section className="bg-gradient-to-br from-[#0A1F44] to-blue-600 text-white pt-20 pb-16">
+    <section className="bg-gradient-to-br from-[#0A1F44] to-blue-600 text-white pt-32 pb-16">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Conteúdo principal */}
@@ -27,7 +27,7 @@ const HeroSection = () => {
                 </Button>
               </Link>
               <Link to="/area-prestador">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-[#0A1F44] font-semibold px-8 py-3 text-lg w-full sm:w-auto">
+                <Button size="lg" className="bg-white text-[#0A1F44] hover:bg-gray-100 font-semibold px-8 py-3 text-lg w-full sm:w-auto border-2 border-white">
                   Quero Trabalhar
                 </Button>
               </Link>

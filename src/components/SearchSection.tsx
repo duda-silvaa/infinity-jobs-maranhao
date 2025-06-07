@@ -1,16 +1,17 @@
-
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Search, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const SearchSection = () => {
   const [servico, setServico] = useState('');
   const [cidade, setCidade] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const servicos = [
     'Reparos Gerais',
@@ -39,15 +40,30 @@ const SearchSection = () => {
   ];
 
   // Função para realizar busca
-  // Redireciona para área do cliente com parâmetros de busca
+  // Se usuário não estiver logado, redireciona para área do cliente (login)
+  // Se estiver logado, vai direto para o painel do cliente
   const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (servico) params.append('servico', servico);
-    if (cidade) params.append('cidade', cidade);
-    if (searchTerm) params.append('busca', searchTerm);
-    
     console.log('Realizando busca com parâmetros:', { servico, cidade, searchTerm });
-    navigate(`/area-cliente?${params.toString()}`);
+    
+    if (isAuthenticated) {
+      // Se já estiver logado, vai para o painel do cliente
+      navigate('/cliente-panel');
+    } else {
+      // Se não estiver logado, vai para área do cliente para fazer login
+      const params = new URLSearchParams();
+      if (servico) params.append('servico', servico);
+      if (cidade) params.append('cidade', cidade);
+      if (searchTerm) params.append('busca', searchTerm);
+      
+      navigate(`/area-cliente?${params.toString()}`);
+    }
+  };
+
+  // Função para busca rápida por categoria
+  const handleQuickSearch = (categoria: string) => {
+    console.log('Busca rápida por:', categoria);
+    setServico(categoria);
+    handleSearch();
   };
 
   return (
@@ -137,10 +153,7 @@ const SearchSection = () => {
                 key={item}
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setServico(item);
-                  handleSearch();
-                }}
+                onClick={() => handleQuickSearch(item)}
                 className="border-gray-300 text-gray-600 hover:border-[#0A1F44] hover:text-[#0A1F44]"
               >
                 {item}
