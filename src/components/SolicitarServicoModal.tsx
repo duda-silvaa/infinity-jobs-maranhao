@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Button } from '../components/ui/button';
@@ -21,9 +20,10 @@ const servicos = [
 interface SolicitarServicoModalProps {
   children: React.ReactNode;
   onSuccess?: () => void;
+  onSolicitacaoCreated?: () => void;
 }
 
-const SolicitarServicoModal = ({ children, onSuccess }: SolicitarServicoModalProps) => {
+const SolicitarServicoModal = ({ children, onSuccess, onSolicitacaoCreated }: SolicitarServicoModalProps) => {
   const [servico, setServico] = useState('');
   const [descricao, setDescricao] = useState('');
   const [endereco, setEndereco] = useState('');
@@ -85,6 +85,11 @@ const SolicitarServicoModal = ({ children, onSuccess }: SolicitarServicoModalPro
       // Chamar callback de sucesso se fornecido
       if (onSuccess) {
         onSuccess();
+      }
+      
+      // Chamar callback onSolicitacaoCreated se fornecido
+      if (onSolicitacaoCreated) {
+        onSolicitacaoCreated();
       }
     } catch (error: any) {
       console.error('Erro ao criar solicitação:', error);
