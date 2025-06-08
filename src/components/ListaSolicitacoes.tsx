@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -7,7 +6,7 @@ import { Clock, MapPin, DollarSign, User, Star } from 'lucide-react';
 import { servicoService, Solicitacao } from '../services/servicoService';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface ListaSolicitacoesProps {
@@ -15,6 +14,32 @@ interface ListaSolicitacoesProps {
   refresh?: boolean;
   onRefreshComplete?: () => void;
 }
+
+// Função para formatar data de forma segura
+const formatDateSafe = (dateString: string) => {
+  try {
+    if (!dateString) return 'Data não informada';
+    
+    // Tenta primeiro interpretar como ISO string
+    let date = parseISO(dateString);
+    
+    // Se não for válida, tenta criar uma nova data
+    if (!isValid(date)) {
+      date = new Date(dateString);
+    }
+    
+    // Se ainda não for válida, retorna texto padrão
+    if (!isValid(date)) {
+      console.warn('Data inválida recebida:', dateString);
+      return 'Data inválida';
+    }
+    
+    return format(date, 'dd/MM/yyyy', { locale: ptBR });
+  } catch (error) {
+    console.error('Erro ao formatar data:', error, 'Data recebida:', dateString);
+    return 'Data inválida';
+  }
+};
 
 const ListaSolicitacoes = ({ tipo, refresh, onRefreshComplete }: ListaSolicitacoesProps) => {
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
@@ -42,6 +67,13 @@ const ListaSolicitacoes = ({ tipo, refresh, onRefreshComplete }: ListaSolicitaco
       
       setSolicitacoes(data);
       console.log(`${data.length} solicitações carregadas`);
+      
+      // Debug: vamos ver o formato das datas que estão chegando
+      if (data.length > 0) {
+        console.log('Primeira solicitação (para debug de data):', data[0]);
+        console.log('Campo data_solicitada:', data[0].data_solicitada);
+        console.log('Tipo da data:', typeof data[0].data_solicitada);
+      }
     } catch (error: any) {
       console.error('Erro ao carregar solicitações:', error);
       
@@ -236,7 +268,7 @@ const ListaSolicitacoes = ({ tipo, refresh, onRefreshComplete }: ListaSolicitaco
               
               <div className="flex items-center text-gray-600">
                 <Clock size={16} className="mr-2" />
-                {format(new Date(solicitacao.data_solicitada), 'dd/MM/yyyy', { locale: ptBR })} às {solicitacao.horario_solicitado}
+                {formatDateSafe(solicitacao.data_solicitada)} às {solicitacao.horario_solicitado || 'Horário não informado'}
               </div>
               
               {solicitacao.orcamento_maximo && (
