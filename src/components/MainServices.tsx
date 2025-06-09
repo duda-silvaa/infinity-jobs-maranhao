@@ -14,7 +14,8 @@ import {
   Camera,
   ArrowRight,
   Star,
-  Users
+  Users,
+  TrendingUp
 } from 'lucide-react';
 
 const MainServices = () => {
@@ -117,8 +118,9 @@ const MainServices = () => {
                 {/* Badges */}
                 <div className="absolute top-2 left-2 right-2 flex justify-between">
                   {service.popular && (
-                    <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-xs font-semibold animate-pulse">
-                      🔥 Popular
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center">
+                      <TrendingUp size={12} className="mr-1" />
+                      Popular
                     </div>
                   )}
                   <div className="bg-white bg-opacity-90 text-[#0A1F44] px-2 py-1 rounded-full text-xs font-semibold flex items-center">

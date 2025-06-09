@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Search, Users, Star, ArrowRight, CheckCircle } from 'lucide-react';
+import { Search, Users, Star, ArrowRight, CheckCircle, Briefcase, Clock } from 'lucide-react';
 
 const HeroSection = () => {
   return (
@@ -72,23 +72,33 @@ const HeroSection = () => {
                 className="w-full h-80 object-cover rounded-2xl shadow-lg"
               />
               
-              {/* Cards flutuantes animados */}
-              <div className="absolute -bottom-4 -left-4 bg-white text-[#0A1F44] p-6 rounded-xl shadow-lg animate-bounce">
+              {/* Cards flutuantes animados - novos cards */}
+              <div className="absolute -bottom-4 -left-4 bg-white text-[#0A1F44] p-4 rounded-xl shadow-lg animate-float">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center">
-                    <Star className="text-[#0A1F44]" size={24} />
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                    <CheckCircle className="text-white" size={20} />
                   </div>
                   <div>
-                    <div className="font-bold text-lg">João Silva</div>
-                    <div className="text-gray-600">Eletricista • ⭐ 4.9</div>
+                    <div className="font-bold text-sm">Serviço Concluído</div>
+                    <div className="text-gray-600 text-xs">Há 2 minutos</div>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute -top-4 -right-4 bg-yellow-400 text-[#0A1F44] p-4 rounded-xl shadow-lg animate-pulse">
+              <div className="absolute -top-4 -right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white p-4 rounded-xl shadow-lg animate-bounce">
                 <div className="flex items-center space-x-2">
-                  <Users size={20} />
-                  <span className="font-bold">500+ Profissionais</span>
+                  <Users size={18} />
+                  <div>
+                    <div className="font-bold text-sm">500+ Profissionais</div>
+                    <div className="text-xs opacity-90">Ativos agora</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute top-1/2 -right-6 bg-blue-500 text-white p-3 rounded-xl shadow-lg animate-pulse">
+                <div className="flex items-center space-x-2">
+                  <Clock size={16} />
+                  <span className="font-bold text-sm">24/7</span>
                 </div>
               </div>
             </div>
