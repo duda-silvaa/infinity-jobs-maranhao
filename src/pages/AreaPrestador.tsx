@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -65,13 +64,6 @@ const AreaPrestador = () => {
       <main className="pt-16">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-[#0A1F44] via-blue-700 to-blue-800 text-white py-24 overflow-hidden">
-          {/* Elementos decorativos */}
-          <div className="absolute inset-0">
-            <div className="absolute top-10 right-10 w-40 h-40 bg-yellow-400 bg-opacity-20 rounded-full animate-float"></div>
-            <div className="absolute bottom-20 left-10 w-32 h-32 bg-white bg-opacity-10 rounded-full animate-bounce delay-500"></div>
-            <div className="absolute top-1/2 left-1/4 w-20 h-20 bg-blue-300 bg-opacity-30 rounded-full animate-pulse delay-1000"></div>
-          </div>
-          
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-10"
             style={{
@@ -112,8 +104,8 @@ const AreaPrestador = () => {
               {/* Imagem com cards flutuantes */}
               <div className="relative animate-fade-in delay-800">
                 <img 
-                  src="https://images.unsplash.com/photo-1556745757-8d76bdb6984b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                  alt="Prestador trabalhando" 
+                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                  alt="Mix de profissionais trabalhando" 
                   className="w-full h-80 object-cover rounded-2xl shadow-2xl"
                 />
                 

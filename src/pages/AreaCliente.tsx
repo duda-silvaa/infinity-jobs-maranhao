@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -58,13 +57,6 @@ const AreaCliente = () => {
       <main className="pt-16">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-[#0A1F44] via-blue-700 to-blue-800 text-white py-24 overflow-hidden">
-          {/* Elementos decorativos animados */}
-          <div className="absolute inset-0">
-            <div className="absolute top-20 left-10 w-32 h-32 bg-yellow-400 bg-opacity-20 rounded-full animate-bounce delay-300"></div>
-            <div className="absolute top-40 right-20 w-24 h-24 bg-white bg-opacity-10 rounded-full animate-pulse delay-700"></div>
-            <div className="absolute bottom-20 left-1/3 w-16 h-16 bg-blue-300 bg-opacity-30 rounded-full animate-float"></div>
-          </div>
-          
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-10"
             style={{
@@ -100,8 +92,8 @@ const AreaCliente = () => {
               {/* Imagem com estatísticas flutuantes */}
               <div className="relative animate-fade-in delay-800">
                 <img 
-                  src="https://images.unsplash.com/photo-1556745757-8d76bdb6984b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                  alt="Cliente satisfeito" 
+                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                  alt="Diversos profissionais trabalhando" 
                   className="w-full h-80 object-cover rounded-2xl shadow-2xl"
                 />
                 
