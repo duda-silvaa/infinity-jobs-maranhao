@@ -7,13 +7,6 @@ import { Search, Users, Star, ArrowRight, CheckCircle, Briefcase, Clock } from '
 const HeroSection = () => {
   return (
     <section className="bg-gradient-to-br from-[#0A1F44] to-blue-600 text-white pt-32 pb-16 relative overflow-hidden">
-      {/* Elementos de fundo animados */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-400 bg-opacity-20 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-white bg-opacity-10 rounded-full animate-bounce"></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-yellow-300 bg-opacity-20 rounded-full animate-pulse delay-300"></div>
-      </div>
-
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Conteúdo principal */}
@@ -72,7 +65,7 @@ const HeroSection = () => {
                 className="w-full h-80 object-cover rounded-2xl shadow-lg"
               />
               
-              {/* Cards flutuantes animados - novos cards */}
+              {/* Cards flutuantes animados */}
               <div className="absolute -bottom-4 -left-4 bg-white text-[#0A1F44] p-4 rounded-xl shadow-lg animate-float">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
