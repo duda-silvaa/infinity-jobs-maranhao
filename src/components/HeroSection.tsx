@@ -61,7 +61,7 @@ const HeroSection = () => {
             <div className="bg-white bg-opacity-10 rounded-3xl p-8 backdrop-blur-sm">
               <img 
                 src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Pessoas trabalhando e se conectando" 
+                alt="Diversos profissionais e serviços" 
                 className="w-full h-80 object-cover rounded-2xl shadow-lg"
               />
               

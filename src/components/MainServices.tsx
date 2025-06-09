@@ -80,7 +80,7 @@ const MainServices = () => {
       icon: <Camera size={32} />,
       title: 'Fotografia',
       description: 'Ensaios, eventos e fotografias profissionais',
-      image: 'https://images.unsplash.com/photo-1554048612-b6a482b224a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
       popular: false,
       professionals: '20+'
     }

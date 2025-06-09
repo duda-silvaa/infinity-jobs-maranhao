@@ -12,7 +12,7 @@ const ProfileShowcase = () => {
     bio: "Há 15 anos transformando lares com serviços elétricos de qualidade. Meu sonho é levar segurança e conforto para cada família através do Infinity TrabalheJá.",
     badges: ["Confiável", "Pontual", "5 Estrelas"],
     completedJobs: 156,
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
   };
 
   return (
