@@ -56,54 +56,48 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Imagem de trabalho com mapa do Maranhão */}
+          {/* Imagem de pessoas trabalhando com mapa pequeno do Maranhão */}
           <div className="relative animate-fade-in delay-800">
-            <div className="grid grid-cols-1 gap-6">
-              {/* Imagem principal de pessoas trabalhando */}
-              <div className="bg-white bg-opacity-10 rounded-3xl p-6 backdrop-blur-sm">
-                <img 
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                  alt="Equipe trabalhando em escritório" 
-                  className="w-full h-64 object-cover rounded-2xl shadow-lg"
-                />
-                
-                {/* Cards flutuantes animados */}
-                <div className="absolute -bottom-4 -left-4 bg-white text-[#0A1F44] p-4 rounded-xl shadow-lg animate-float">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                      <CheckCircle className="text-white" size={20} />
-                    </div>
-                    <div>
-                      <div className="font-bold text-sm">Serviço Concluído</div>
-                      <div className="text-gray-600 text-xs">Há 2 minutos</div>
-                    </div>
-                  </div>
+            <div className="bg-white bg-opacity-10 rounded-3xl p-6 backdrop-blur-sm">
+              <img 
+                src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Equipe trabalhando em escritório" 
+                className="w-full h-80 object-cover rounded-2xl shadow-lg"
+              />
+              
+              {/* Mapa pequeno do Maranhão no canto */}
+              <div className="absolute top-8 right-8 bg-white bg-opacity-95 rounded-xl p-3 shadow-lg">
+                <div className="flex items-center space-x-2 mb-2">
+                  <MapPin className="text-[#0A1F44]" size={16} />
+                  <span className="text-[#0A1F44] font-semibold text-sm">Maranhão</span>
                 </div>
-
-                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white p-4 rounded-xl shadow-lg animate-bounce">
-                  <div className="flex items-center space-x-2">
-                    <Users size={18} />
-                    <div>
-                      <div className="font-bold text-sm">500+ Profissionais</div>
-                      <div className="text-xs opacity-90">Ativos agora</div>
-                    </div>
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Maranhao_in_Brazil.svg/200px-Maranhao_in_Brazil.svg.png"
+                  alt="Mapa do Maranhão" 
+                  className="w-16 h-16 object-contain"
+                />
+              </div>
+              
+              {/* Cards flutuantes animados */}
+              <div className="absolute -bottom-4 -left-4 bg-white text-[#0A1F44] p-4 rounded-xl shadow-lg animate-float">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                    <CheckCircle className="text-white" size={20} />
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm">Serviço Concluído</div>
+                    <div className="text-gray-600 text-xs">Há 2 minutos</div>
                   </div>
                 </div>
               </div>
 
-              {/* Mapa do Maranhão */}
-              <div className="bg-white bg-opacity-10 rounded-2xl p-4 backdrop-blur-sm">
-                <div className="flex items-center space-x-3 mb-3">
-                  <MapPin className="text-yellow-400" size={20} />
-                  <h3 className="text-lg font-semibold">Maranhão</h3>
-                </div>
-                <img 
-                  src="https://images.unsplash.com/photo-1582655246489-b98e2b13c4c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                  alt="Mapa do Maranhão" 
-                  className="w-full h-32 object-cover rounded-xl"
-                />
-                <div className="mt-2 text-sm text-blue-100">
-                  Cobertura em todo o estado
+              <div className="absolute top-20 -right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white p-4 rounded-xl shadow-lg animate-bounce">
+                <div className="flex items-center space-x-2">
+                  <Users size={18} />
+                  <div>
+                    <div className="font-bold text-sm">500+ Profissionais</div>
+                    <div className="text-xs opacity-90">Ativos agora</div>
+                  </div>
                 </div>
               </div>
             </div>

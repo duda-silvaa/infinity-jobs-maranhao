@@ -2,21 +2,18 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Search, MapPin, Sparkles } from 'lucide-react';
+import { Search, Sparkles, TrendingUp, Star, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const SearchSection = () => {
-  const [servico, setServico] = useState('');
-  const [cidade, setCidade] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const servicos = [
+  const servicosDisponiveis = [
     'Reparos Gerais',
-    'Limpeza Residencial',
+    'Limpeza Residencial', 
     'Serviços Elétricos',
     'Pintura',
     'Jardinagem',
@@ -27,67 +24,52 @@ const SearchSection = () => {
     'Fotografia'
   ];
 
-  const cidades = [
-    'São Luís',
-    'Imperatriz',
-    'Timon',
-    'Caxias',
-    'Codó',
-    'Açailândia',
-    'Bacabal',
-    'Balsas',
-    'Barra do Corda',
-    'Santa Inês'
-  ];
-
   // Função para realizar busca
   const handleSearch = () => {
-    console.log('Realizando busca com parâmetros:', { servico, cidade, searchTerm });
+    console.log('Realizando busca com termo:', searchTerm);
     
-    // Se o usuário digitou algo na busca livre, usar isso como serviço
-    const servicoBusca = searchTerm || servico;
-    
-    if (isAuthenticated) {
-      // Se já estiver logado, vai para o painel do cliente
-      navigate('/cliente-panel', { 
-        state: { 
-          searchParams: { 
-            servico: servicoBusca, 
-            cidade: cidade 
+    if (searchTerm.trim()) {
+      // Verifica se o termo de busca corresponde a algum serviço disponível
+      const servicoEncontrado = servicosDisponiveis.find(servico => 
+        servico.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        searchTerm.toLowerCase().includes(servico.toLowerCase())
+      );
+
+      if (isAuthenticated) {
+        navigate('/cliente-panel', { 
+          state: { 
+            searchParams: { 
+              servico: servicoEncontrado || searchTerm,
+              cidade: ''
+            } 
           } 
-        } 
-      });
-    } else {
-      // Se não estiver logado, vai para área do cliente para fazer login
-      const params = new URLSearchParams();
-      if (servicoBusca) params.append('servico', servicoBusca);
-      if (cidade) params.append('cidade', cidade);
-      
-      navigate(`/area-cliente?${params.toString()}`);
+        });
+      } else {
+        const params = new URLSearchParams();
+        params.append('servico', servicoEncontrado || searchTerm);
+        navigate(`/area-cliente?${params.toString()}`);
+      }
     }
   };
 
   // Função para busca rápida por categoria
   const handleQuickSearch = (categoria: string) => {
     console.log('Busca rápida por:', categoria);
-    setServico(categoria);
-    setSearchTerm('');
+    setSearchTerm(categoria);
     
-    // Executa a busca automaticamente
     setTimeout(() => {
       if (isAuthenticated) {
         navigate('/cliente-panel', { 
           state: { 
             searchParams: { 
-              servico: categoria, 
-              cidade: cidade 
+              servico: categoria,
+              cidade: ''
             } 
           } 
         });
       } else {
         const params = new URLSearchParams();
         params.append('servico', categoria);
-        if (cidade) params.append('cidade', cidade);
         navigate(`/area-cliente?${params.toString()}`);
       }
     }, 100);
@@ -109,83 +91,106 @@ const SearchSection = () => {
             <Sparkles className="text-yellow-500 ml-2 animate-pulse" size={32} />
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Busque por categoria, localização ou digite o que você precisa
+            Digite o que você precisa e encontre profissionais qualificados
           </p>
         </div>
 
-        {/* Formulário de busca */}
-        <div className="max-w-4xl mx-auto animate-fade-in delay-200">
-          <div className="bg-white rounded-lg p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
-            <div className="grid md:grid-cols-3 gap-4 mb-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Tipo de Serviço
-                </label>
-                <Select value={servico} onValueChange={setServico}>
-                  <SelectTrigger className="hover:border-[#0A1F44] transition-colors">
-                    <SelectValue placeholder="Selecione o serviço" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {servicos.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {s}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+        {/* Grid com busca e estatísticas */}
+        <div className="max-w-6xl mx-auto animate-fade-in delay-200">
+          <div className="grid lg:grid-cols-3 gap-8 items-center">
+            
+            {/* Estatísticas à esquerda */}
+            <div className="bg-gradient-to-br from-[#0A1F44] to-blue-600 text-white rounded-xl p-6 space-y-4">
+              <h3 className="text-lg font-bold mb-4">🔥 Em destaque hoje</h3>
+              
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <TrendingUp size={20} className="text-[#0A1F44]" />
+                </div>
+                <div>
+                  <div className="font-semibold">Limpeza Residencial</div>
+                  <div className="text-blue-100 text-sm">+45% buscas hoje</div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  <MapPin className="inline mr-1" size={16} />
-                  Cidade
-                </label>
-                <Select value={cidade} onValueChange={setCidade}>
-                  <SelectTrigger className="hover:border-[#0A1F44] transition-colors">
-                    <SelectValue placeholder="Selecione a cidade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cidades.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-green-400 rounded-full flex items-center justify-center">
+                  <Users size={20} className="text-white" />
+                </div>
+                <div>
+                  <div className="font-semibold">500+ Profissionais</div>
+                  <div className="text-blue-100 text-sm">Ativos no Maranhão</div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Busca Livre
-                </label>
-                <Input
-                  placeholder="Digite o que você procura..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="hover:border-[#0A1F44] transition-colors"
-                />
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <Star size={20} className="text-[#0A1F44]" />
+                </div>
+                <div>
+                  <div className="font-semibold">4.8/5 Avaliação</div>
+                  <div className="text-blue-100 text-sm">Média geral</div>
+                </div>
               </div>
             </div>
 
-            <div className="text-center">
-              <Button 
-                onClick={handleSearch}
-                size="lg" 
-                className="bg-gradient-to-r from-[#0A1F44] to-blue-600 text-white hover:from-blue-900 hover:to-blue-700 px-8 flex items-center space-x-2 mx-auto hover-scale transition-all duration-300"
-              >
-                <Search size={20} />
-                <span>Buscar Prestadores</span>
-              </Button>
+            {/* Formulário de busca centralizado */}
+            <div className="bg-white rounded-xl p-8 shadow-2xl border border-gray-100 hover:shadow-3xl transition-shadow duration-300">
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-[#0A1F44] mb-2">Buscar Serviços</h3>
+                <p className="text-gray-600 text-sm">O que você precisa hoje?</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="relative">
+                  <Input
+                    placeholder="Ex: Eletricista, Pintor, Limpeza..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                    className="pl-12 h-12 text-lg border-2 hover:border-[#0A1F44] focus:border-[#0A1F44] transition-colors"
+                  />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                </div>
+
+                <Button 
+                  onClick={handleSearch}
+                  size="lg" 
+                  className="w-full bg-gradient-to-r from-[#0A1F44] to-blue-600 text-white hover:from-blue-900 hover:to-blue-700 h-12 text-lg font-semibold hover-scale transition-all duration-300"
+                  disabled={!searchTerm.trim()}
+                >
+                  <Search size={20} className="mr-2" />
+                  Buscar Agora
+                </Button>
+              </div>
+            </div>
+
+            {/* Serviços populares à direita */}
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+              <h3 className="text-lg font-bold text-[#0A1F44] mb-4">⚡ Serviços Populares</h3>
+              <div className="space-y-3">
+                {['Eletricista', 'Pintor', 'Limpeza', 'Encanador'].map((servico, index) => (
+                  <button
+                    key={servico}
+                    onClick={() => handleQuickSearch(servico)}
+                    className="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-[#0A1F44] hover:bg-blue-50 transition-all duration-200 group"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium text-gray-700 group-hover:text-[#0A1F44]">{servico}</span>
+                      <span className="text-xs text-gray-500 group-hover:text-blue-600">#{index + 1}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Sugestões rápidas com animação */}
+        {/* Sugestões rápidas */}
         <div className="max-w-4xl mx-auto mt-8 animate-fade-in delay-400">
-          <p className="text-center text-gray-600 mb-4">🔥 Buscas populares:</p>
+          <p className="text-center text-gray-600 mb-4">🔍 Ou escolha uma categoria:</p>
           <div className="flex flex-wrap justify-center gap-3">
-            {['Eletricista', 'Encanador', 'Pintor', 'Faxineira', 'Jardineiro', 'Designer'].map((item, index) => (
+            {['Reparos Gerais', 'Design Gráfico', 'Jardinagem', 'Mecânica', 'Fotografia', 'Consultoria'].map((item, index) => (
               <Button
                 key={item}
                 variant="outline"
