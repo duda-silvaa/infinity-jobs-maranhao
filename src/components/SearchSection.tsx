@@ -11,6 +11,7 @@ const SearchSection = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
+  // Serviços disponíveis na home - mesmos do MainServices
   const servicosDisponiveis = [
     'Reparos Gerais',
     'Limpeza Residencial', 
@@ -29,11 +30,13 @@ const SearchSection = () => {
     console.log('Realizando busca com termo:', searchTerm);
     
     if (searchTerm.trim()) {
-      // Verifica se o termo de busca corresponde a algum serviço disponível
+      // Busca por correspondência parcial nos serviços disponíveis
       const servicoEncontrado = servicosDisponiveis.find(servico => 
         servico.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        searchTerm.toLowerCase().includes(servico.toLowerCase())
+        searchTerm.toLowerCase().includes(servico.toLowerCase().split(' ')[0]) // busca pela primeira palavra
       );
+
+      console.log('Serviço encontrado:', servicoEncontrado);
 
       if (isAuthenticated) {
         navigate('/cliente-panel', { 
@@ -169,7 +172,7 @@ const SearchSection = () => {
             <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
               <h3 className="text-lg font-bold text-[#0A1F44] mb-4">⚡ Serviços Populares</h3>
               <div className="space-y-3">
-                {['Eletricista', 'Pintor', 'Limpeza', 'Encanador'].map((servico, index) => (
+                {['Reparos Gerais', 'Limpeza Residencial', 'Serviços Elétricos', 'Pintura'].map((servico, index) => (
                   <button
                     key={servico}
                     onClick={() => handleQuickSearch(servico)}
@@ -190,7 +193,7 @@ const SearchSection = () => {
         <div className="max-w-4xl mx-auto mt-8 animate-fade-in delay-400">
           <p className="text-center text-gray-600 mb-4">🔍 Ou escolha uma categoria:</p>
           <div className="flex flex-wrap justify-center gap-3">
-            {['Reparos Gerais', 'Design Gráfico', 'Jardinagem', 'Mecânica', 'Fotografia', 'Consultoria'].map((item, index) => (
+            {['Design Gráfico', 'Jardinagem', 'Mecânica Automotiva', 'Fotografia', 'Consultoria', 'Desenvolvimento Web'].map((item, index) => (
               <Button
                 key={item}
                 variant="outline"

@@ -78,7 +78,7 @@ const HeroSection = () => {
                 />
               </div>
               
-              {/* Cards flutuantes animados */}
+              {/* Card flutuante animado */}
               <div className="absolute -bottom-4 -left-4 bg-white text-[#0A1F44] p-4 rounded-xl shadow-lg animate-float">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
@@ -87,16 +87,6 @@ const HeroSection = () => {
                   <div>
                     <div className="font-bold text-sm">Serviço Concluído</div>
                     <div className="text-gray-600 text-xs">Há 2 minutos</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute top-20 -right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white p-4 rounded-xl shadow-lg animate-bounce">
-                <div className="flex items-center space-x-2">
-                  <Users size={18} />
-                  <div>
-                    <div className="font-bold text-sm">500+ Profissionais</div>
-                    <div className="text-xs opacity-90">Ativos agora</div>
                   </div>
                 </div>
               </div>
