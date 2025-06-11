@@ -1,8 +1,16 @@
 
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, User, Clock } from 'lucide-react';
+import { Heart, MessageCircle, Share2, User, Clock, Send } from 'lucide-react';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
+
+interface Reply {
+  id: number;
+  author: string;
+  avatar: string;
+  content: string;
+  time: string;
+}
 
 interface Comment {
   id: number;
@@ -12,10 +20,13 @@ interface Comment {
   likes: number;
   time: string;
   liked: boolean;
+  replies: Reply[];
+  showReplyForm: boolean;
 }
 
 const SocialFeed = () => {
   const [newComment, setNewComment] = useState('');
+  const [replyTexts, setReplyTexts] = useState<{[key: number]: string}>({});
   const [comments, setComments] = useState<Comment[]>([
     {
       id: 1,
@@ -24,7 +35,17 @@ const SocialFeed = () => {
       content: "A Infinity TrabalheJá revolucionou meu negócio! Consegui encontrar clientes incríveis e expandir meus serviços de limpeza. Recomendo para todos os profissionais!",
       likes: 24,
       time: "há 2 horas",
-      liked: false
+      liked: false,
+      replies: [
+        {
+          id: 1,
+          author: "João Silva",
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+          content: "Que ótimo Maria! Também tive uma experiência excelente.",
+          time: "há 1 hora"
+        }
+      ],
+      showReplyForm: false
     },
     {
       id: 2,
@@ -33,7 +54,9 @@ const SocialFeed = () => {
       content: "Contratei um eletricista pela plataforma e fiquei impressionado com a qualidade! O processo foi super simples e o profissional chegou no horário combinado.",
       likes: 18,
       time: "há 4 horas",
-      liked: false
+      liked: false,
+      replies: [],
+      showReplyForm: false
     },
     {
       id: 3,
@@ -42,7 +65,9 @@ const SocialFeed = () => {
       content: "Como prestadora de serviços de design, posso dizer que a Infinity me conectou com projetos incríveis aqui no Maranhão. A comunidade é muito acolhedora!",
       likes: 31,
       time: "há 6 horas",
-      liked: false
+      liked: false,
+      replies: [],
+      showReplyForm: false
     }
   ]);
 
@@ -56,7 +81,9 @@ const SocialFeed = () => {
         content: newComment,
         likes: 0,
         time: "agora",
-        liked: false
+        liked: false,
+        replies: [],
+        showReplyForm: false
       };
       setComments([newCommentObj, ...comments]);
       setNewComment('');
@@ -69,6 +96,43 @@ const SocialFeed = () => {
         ? { ...comment, liked: !comment.liked, likes: comment.liked ? comment.likes - 1 : comment.likes + 1 }
         : comment
     ));
+  };
+
+  const toggleReplyForm = (commentId: number) => {
+    setComments(comments.map(comment =>
+      comment.id === commentId
+        ? { ...comment, showReplyForm: !comment.showReplyForm }
+        : comment
+    ));
+  };
+
+  const handleReplySubmit = (commentId: number) => {
+    const replyText = replyTexts[commentId];
+    if (replyText && replyText.trim()) {
+      const newReply: Reply = {
+        id: Date.now(),
+        author: "Você",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+        content: replyText,
+        time: "agora"
+      };
+
+      setComments(comments.map(comment =>
+        comment.id === commentId
+          ? { 
+              ...comment, 
+              replies: [...comment.replies, newReply],
+              showReplyForm: false
+            }
+          : comment
+      ));
+
+      setReplyTexts(prev => ({ ...prev, [commentId]: '' }));
+    }
+  };
+
+  const updateReplyText = (commentId: number, text: string) => {
+    setReplyTexts(prev => ({ ...prev, [commentId]: text }));
   };
 
   return (
@@ -131,7 +195,7 @@ const SocialFeed = () => {
                     <p className="text-gray-700 mb-4 leading-relaxed">{comment.content}</p>
                     
                     {/* Ações do comentário */}
-                    <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-6 mb-4">
                       <button
                         onClick={() => toggleLike(comment.id)}
                         className={`flex items-center space-x-2 transition-colors ${
@@ -144,7 +208,10 @@ const SocialFeed = () => {
                         <span className="text-sm">{comment.likes}</span>
                       </button>
                       
-                      <button className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors">
+                      <button 
+                        onClick={() => toggleReplyForm(comment.id)}
+                        className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors"
+                      >
                         <MessageCircle size={18} />
                         <span className="text-sm">Responder</span>
                       </button>
@@ -154,6 +221,71 @@ const SocialFeed = () => {
                         <span className="text-sm">Compartilhar</span>
                       </button>
                     </div>
+
+                    {/* Respostas */}
+                    {comment.replies.length > 0 && (
+                      <div className="ml-8 space-y-3 border-l-2 border-gray-100 pl-4">
+                        {comment.replies.map((reply) => (
+                          <div key={reply.id} className="flex items-start space-x-3">
+                            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                              <img 
+                                src={reply.avatar} 
+                                alt={reply.author}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <h5 className="font-medium text-[#0A1F44] text-sm">{reply.author}</h5>
+                                <span className="text-gray-500 text-xs">{reply.time}</span>
+                              </div>
+                              <p className="text-gray-700 text-sm">{reply.content}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Formulário de resposta */}
+                    {comment.showReplyForm && (
+                      <div className="mt-4 ml-8 border-l-2 border-blue-200 pl-4">
+                        <div className="flex space-x-3">
+                          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                            <img 
+                              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
+                              alt="Você"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <Textarea
+                              placeholder="Escreva sua resposta..."
+                              value={replyTexts[comment.id] || ''}
+                              onChange={(e) => updateReplyText(comment.id, e.target.value)}
+                              className="mb-2 min-h-[80px] resize-none text-sm"
+                            />
+                            <div className="flex space-x-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleReplySubmit(comment.id)}
+                                disabled={!replyTexts[comment.id]?.trim()}
+                                className="bg-[#0A1F44] text-white hover:bg-blue-700"
+                              >
+                                <Send size={14} className="mr-1" />
+                                Responder
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => toggleReplyForm(comment.id)}
+                              >
+                                Cancelar
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
