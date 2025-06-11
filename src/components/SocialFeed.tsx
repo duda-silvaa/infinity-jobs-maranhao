@@ -302,14 +302,14 @@ const SocialFeed = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   size="lg" 
-                  className="bg-yellow-400 text-[#0A1F44] hover:bg-yellow-300"
+                  className="bg-yellow-400 text-[#0A1F44] hover:bg-yellow-300 font-semibold"
                 >
                   Cadastre-se Agora
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-[#0A1F44]"
+                  className="border-white text-white hover:bg-white hover:text-[#0A1F44] font-semibold"
                 >
                   Saiba Mais
                 </Button>

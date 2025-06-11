@@ -56,7 +56,7 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Imagem de pessoas trabalhando com mapa pequeno do Maranhão */}
+          {/* Imagem de duas pessoas trabalhando com indicador do Maranhão */}
           <div className="relative animate-fade-in delay-800">
             <div className="bg-white bg-opacity-10 rounded-3xl p-6 backdrop-blur-sm">
               <img 
@@ -65,17 +65,12 @@ const HeroSection = () => {
                 className="w-full h-80 object-cover rounded-2xl shadow-lg"
               />
               
-              {/* Mapa pequeno do Maranhão no canto */}
+              {/* Indicador do Maranhão simplificado */}
               <div className="absolute top-8 right-8 bg-white bg-opacity-95 rounded-xl p-3 shadow-lg">
-                <div className="flex items-center space-x-2 mb-2">
+                <div className="flex items-center space-x-2">
                   <MapPin className="text-[#0A1F44]" size={16} />
                   <span className="text-[#0A1F44] font-semibold text-sm">Maranhão</span>
                 </div>
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Maranhao_in_Brazil.svg/200px-Maranhao_in_Brazil.svg.png"
-                  alt="Mapa do Maranhão" 
-                  className="w-16 h-16 object-contain"
-                />
               </div>
               
               {/* Card flutuante animado */}
