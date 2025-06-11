@@ -60,8 +60,8 @@ const HeroSection = () => {
           <div className="relative animate-fade-in delay-800">
             <div className="bg-white bg-opacity-10 rounded-3xl p-8 backdrop-blur-sm">
               <img 
-                src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Diversos profissionais e serviços" 
+                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Equipe diversificada trabalhando juntos" 
                 className="w-full h-80 object-cover rounded-2xl shadow-lg"
               />
               

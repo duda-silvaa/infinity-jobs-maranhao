@@ -6,6 +6,7 @@ import SearchSection from '../components/SearchSection';
 import MainServices from '../components/MainServices';
 import RegionalImpact from '../components/RegionalImpact';
 import ProfileShowcase from '../components/ProfileShowcase';
+import SocialFeed from '../components/SocialFeed';
 import GamificationSection from '../components/GamificationSection';
 import UserAreas from '../components/UserAreas';
 import Footer from '../components/Footer';
@@ -20,6 +21,7 @@ const Index = () => {
         <MainServices />
         <RegionalImpact />
         <ProfileShowcase />
+        <SocialFeed />
         <GamificationSection />
         <UserAreas />
       </main>
