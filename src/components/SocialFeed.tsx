@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Share2, User, Clock, Send } from 'lucide-react';
 import { Button } from './ui/button';
@@ -308,8 +307,7 @@ const SocialFeed = () => {
                 </Button>
                 <Button 
                   size="lg" 
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-[#0A1F44] font-semibold bg-transparent"
+                  className="border-white text-white hover:bg-white hover:text-[#0A1F44] font-semibold bg-transparent border"
                 >
                   Saiba Mais
                 </Button>
