@@ -1,15 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { User, UserCheck, Eye, EyeOff } from 'lucide-react';
+import { User, UserCheck, Eye, EyeOff, CheckCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { authService, RegisterData } from '../services/authService';
+import SolicitarServicoModal from '../components/SolicitarServicoModal';
 
 const Cadastro = () => {
   const [userType, setUserType] = useState<'cliente' | 'prestador'>('cliente');
@@ -26,6 +26,8 @@ const Cadastro = () => {
   });
   const [loading, setLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [cadastroSucesso, setCadastroSucesso] = useState(false);
+  const [dadosUsuario, setDadosUsuario] = useState<any>(null);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -33,14 +35,14 @@ const Cadastro = () => {
 
   // Redirecionar se já estiver logado
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated && user && !cadastroSucesso) {
       if (user.type === 'cliente') {
         navigate('/cliente-panel');
       } else {
         navigate('/prestador-panel');
       }
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, navigate, cadastroSucesso]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -51,7 +53,6 @@ const Cadastro = () => {
   };
 
   // Função para cadastrar novo usuário
-  // Envia dados para authService.register que chama POST /api/auth/register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -94,7 +95,6 @@ const Cadastro = () => {
     setLoading(true);
 
     try {
-      // Prepara dados para envio ao backend
       const registerData: RegisterData = {
         name: formData.nome,
         email: formData.email,
@@ -107,18 +107,19 @@ const Cadastro = () => {
 
       console.log('Enviando dados de cadastro para o backend...');
       
-      // Chama endpoint POST /api/auth/register
       const response = await authService.register(registerData);
       
       toast({
         title: "Cadastro realizado com sucesso!",
-        description: "Você pode fazer login agora.",
+        description: "Escolha como deseja continuar.",
       });
       
       console.log('Usuário cadastrado:', response.user.name);
       
-      // Redirecionar para login
-      navigate('/login');
+      // Mostrar opções em vez de redirecionar automaticamente
+      setCadastroSucesso(true);
+      setDadosUsuario(response.user);
+      
     } catch (error: any) {
       console.error('Erro no cadastro:', error);
       
@@ -141,6 +142,75 @@ const Cadastro = () => {
       setLoading(false);
     }
   };
+
+  // Função para ir ao painel
+  const irParaPainel = () => {
+    if (dadosUsuario?.type === 'cliente') {
+      navigate('/cliente-panel');
+    } else {
+      navigate('/prestador-panel');
+    }
+  };
+
+  // Tela de sucesso do cadastro
+  if (cadastroSucesso) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="pt-16 pb-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-8 mt-8 text-center">
+              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-[#0A1F44] mb-2">
+                Cadastro Concluído!
+              </h1>
+              <p className="text-gray-600 mb-6">
+                Bem-vindo ao Infinity TrabalheJá, {dadosUsuario?.name}!
+              </p>
+              
+              {dadosUsuario?.type === 'cliente' ? (
+                <div className="space-y-4">
+                  <p className="text-gray-600 mb-6">
+                    O que você gostaria de fazer agora?
+                  </p>
+                  
+                  <SolicitarServicoModal>
+                    <Button className="w-full bg-[#0A1F44] text-white hover:bg-blue-900 mb-3">
+                      Solicitar um Serviço
+                      <ArrowRight className="ml-2" size={20} />
+                    </Button>
+                  </SolicitarServicoModal>
+                  
+                  <Button 
+                    onClick={irParaPainel}
+                    variant="outline" 
+                    className="w-full border-[#0A1F44] text-[#0A1F44] hover:bg-[#0A1F44] hover:text-white"
+                  >
+                    Ir para o Painel
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-gray-600 mb-6">
+                    Agora você pode acessar seu painel e começar a receber solicitações de serviço!
+                  </p>
+                  
+                  <Button 
+                    onClick={irParaPainel}
+                    className="w-full bg-[#0A1F44] text-white hover:bg-blue-900"
+                  >
+                    Ir para o Painel
+                    <ArrowRight className="ml-2" size={20} />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
