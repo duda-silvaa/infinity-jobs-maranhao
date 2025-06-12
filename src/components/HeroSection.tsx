@@ -56,12 +56,12 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Imagem de duas pessoas trabalhando com indicador do Maranhão */}
+          {/* Imagem de equipe trabalhando com indicador do Maranhão */}
           <div className="relative animate-fade-in delay-800">
             <div className="bg-white bg-opacity-10 rounded-3xl p-6 backdrop-blur-sm">
               <img 
-                src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Equipe trabalhando em escritório" 
+                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Equipe trabalhando em reunião" 
                 className="w-full h-80 object-cover rounded-2xl shadow-lg"
               />
               

@@ -309,7 +309,7 @@ const SocialFeed = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-[#0A1F44] font-semibold"
+                  className="border-white text-white hover:bg-white hover:text-[#0A1F44] font-semibold bg-transparent"
                 >
                   Saiba Mais
                 </Button>
